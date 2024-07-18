@@ -16,6 +16,7 @@ interface Question {
 export default function Index() {
   const [questionsData, setQuestionsData] = useState<Question[]>([]);
   const [questionNumber, setQuestionNumber] = useState(0);
+  const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -30,8 +31,22 @@ export default function Index() {
     fetchData();
   }, []);
 
+  const handleSelectOption = (option: string) => {
+    if (selectedOptions.includes(option)) {
+      setSelectedOptions(selectedOptions.filter((item) => item !== option));
+    } else {
+      setSelectedOptions([...selectedOptions, option]);
+    }
+  };
+
   const renderSuboptionItem = ({ item }: { item: string }) => {
-    return <RadioButton label={item} />;
+    return (
+      <RadioButton
+        label={item}
+        selected={selectedOptions.includes(item)}
+        onPress={() => handleSelectOption(item)}
+      />
+    );
   };
 
   const renderOptionItem = ({
@@ -40,7 +55,13 @@ export default function Index() {
     item: Question["options"][number];
   }) => {
     if (!item.subOptions) {
-      return <RadioButton label={item.option} />;
+      return (
+        <RadioButton
+          label={item.option}
+          selected={selectedOptions.includes(item.option)}
+          onPress={() => handleSelectOption(item.option)}
+        />
+      );
     } else {
       return (
         <>
