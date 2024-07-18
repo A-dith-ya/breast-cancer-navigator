@@ -2,6 +2,7 @@ import { Text, View, StyleSheet } from "react-native";
 import React, { useState, useEffect } from "react";
 import client from "../services/contentfulService";
 import { RadioButton } from "../components/RadioButton";
+import { FlatList } from "react-native-gesture-handler";
 
 interface Question {
   question: string;
@@ -29,13 +30,45 @@ export default function Index() {
     fetchData();
   }, []);
 
+  const renderSuboptionItem = ({ item }: { item: string }) => {
+    return <RadioButton label={item} />;
+  };
+
+  const renderOptionItem = ({
+    item,
+  }: {
+    item: Question["options"][number];
+  }) => {
+    if (!item.subOptions) {
+      return <RadioButton label={item.option} />;
+    } else {
+      return (
+        <>
+          <Text style={styles.optionText}>{item.option}</Text>
+          <FlatList
+            data={item.subOptions}
+            renderItem={renderSuboptionItem}
+            keyExtractor={(item) => item}
+          />
+        </>
+      );
+    }
+  };
+
   return (
     <View style={styles.container}>
       {questionsData.length === 0 ? (
         <Text>Loading...</Text>
       ) : (
         <>
-          <Text>{questionsData[questionNumber].question}</Text>
+          <Text style={styles.questionText}>
+            {questionsData[questionNumber].question}
+          </Text>
+          <FlatList
+            data={questionsData[questionNumber].options}
+            renderItem={renderOptionItem}
+            keyExtractor={(item) => item.option}
+          />
         </>
       )}
     </View>
@@ -47,5 +80,13 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
+  },
+  questionText: {
+    fontSize: 20,
+    marginBottom: 16,
+  },
+  optionText: {
+    fontSize: 16,
+    marginBottom: 8,
   },
 });
