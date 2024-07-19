@@ -2,7 +2,7 @@ import { Text, View, StyleSheet } from "react-native";
 import React, { useState, useEffect } from "react";
 import client from "../services/contentfulService";
 import { RadioButton } from "../components/RadioButton";
-import { FlatList } from "react-native-gesture-handler";
+import { FlatList, GestureHandlerRootView } from "react-native-gesture-handler";
 
 interface Question {
   question: string;
@@ -77,22 +77,24 @@ export default function Index() {
   };
 
   return (
-    <View style={styles.container}>
-      {questionsData.length === 0 ? (
-        <Text>Loading...</Text>
-      ) : (
-        <>
-          <Text style={styles.questionText}>
-            {questionsData[questionNumber].question}
-          </Text>
-          <FlatList
-            data={questionsData[questionNumber].options}
-            renderItem={renderOptionItem}
-            keyExtractor={(item) => item.option}
-          />
-        </>
-      )}
-    </View>
+    <GestureHandlerRootView>
+      <View style={styles.container}>
+        {questionsData.length === 0 ? (
+          <Text>Loading...</Text>
+        ) : (
+          <>
+            <Text style={styles.questionText}>
+              {questionsData[questionNumber].question}
+            </Text>
+            <FlatList
+              data={questionsData[questionNumber].options}
+              renderItem={renderOptionItem}
+              keyExtractor={(item) => item.option}
+            />
+          </>
+        )}
+      </View>
+    </GestureHandlerRootView>
   );
 }
 
