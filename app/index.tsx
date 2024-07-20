@@ -1,8 +1,10 @@
 import { Text, View, StyleSheet } from "react-native";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
+import { FlatList, GestureHandlerRootView } from "react-native-gesture-handler";
+import { WebView } from "react-native-webview";
 import client from "../services/contentfulService";
 import { RadioButton } from "../components/RadioButton";
-import { FlatList, GestureHandlerRootView } from "react-native-gesture-handler";
+import { scrollToSymptom } from "../constants/InjectedJavascript";
 
 interface Question {
   question: string;
@@ -17,6 +19,7 @@ export default function Index() {
   const [questionsData, setQuestionsData] = useState<Question[]>([]);
   const [questionNumber, setQuestionNumber] = useState(0);
   const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
+  const webviewRef = useRef<WebView>(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -47,6 +50,19 @@ export default function Index() {
     />
   );
 
+  const renderWebView = (filter: string) => (
+    <WebView
+      ref={webviewRef}
+      style={styles.webview}
+      source={{
+        uri: "https://cancercareinnovationlab.ca/managing-symptom-distress",
+      }}
+      onLoad={() =>
+        webviewRef.current?.injectJavaScript(scrollToSymptom(filter))
+      }
+    />
+  );
+
   const renderSuboptionItem = ({
     item,
     filter,
@@ -56,7 +72,7 @@ export default function Index() {
   }) => (
     <>
       {renderRadioButton(item)}
-      {selectedOptions.includes(item) && filter && <Text>{filter}</Text>}
+      {selectedOptions.includes(item) && filter && renderWebView(filter)}
     </>
   );
 
@@ -78,6 +94,9 @@ export default function Index() {
           keyExtractor={(item) => item}
         />
       )}
+      {selectedOptions.includes(item.option) &&
+        item.filter &&
+        renderWebView(item.filter)}
     </>
   );
 
@@ -116,5 +135,9 @@ const styles = StyleSheet.create({
   optionText: {
     fontSize: 16,
     marginBottom: 8,
+  },
+  webview: {
+    width: 300,
+    height: 300,
   },
 });
