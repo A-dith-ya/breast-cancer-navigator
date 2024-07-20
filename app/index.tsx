@@ -39,42 +39,47 @@ export default function Index() {
     }
   };
 
-  const renderSuboptionItem = ({ item }: { item: string }) => {
-    return (
-      <RadioButton
-        label={item}
-        selected={selectedOptions.includes(item)}
-        onPress={() => handleSelectOption(item)}
-      />
-    );
-  };
+  const renderRadioButton = (option: string) => (
+    <RadioButton
+      label={option}
+      selected={selectedOptions.includes(option)}
+      onPress={() => handleSelectOption(option)}
+    />
+  );
+
+  const renderSuboptionItem = ({
+    item,
+    filter,
+  }: {
+    item: string;
+    filter?: string;
+  }) => (
+    <>
+      {renderRadioButton(item)}
+      {selectedOptions.includes(item) && filter && <Text>{filter}</Text>}
+    </>
+  );
 
   const renderOptionItem = ({
     item,
   }: {
     item: Question["options"][number];
-  }) => {
-    if (!item.subOptions) {
-      return (
-        <RadioButton
-          label={item.option}
-          selected={selectedOptions.includes(item.option)}
-          onPress={() => handleSelectOption(item.option)}
+  }) => (
+    <>
+      <Text style={styles.optionText}>{item.option}</Text>
+      {!item.subOptions ? (
+        renderRadioButton(item.option)
+      ) : (
+        <FlatList
+          data={item.subOptions}
+          renderItem={({ item: subOptionItem }) =>
+            renderSuboptionItem({ item: subOptionItem, filter: item.filter })
+          }
+          keyExtractor={(item) => item}
         />
-      );
-    } else {
-      return (
-        <>
-          <Text style={styles.optionText}>{item.option}</Text>
-          <FlatList
-            data={item.subOptions}
-            renderItem={renderSuboptionItem}
-            keyExtractor={(item) => item}
-          />
-        </>
-      );
-    }
-  };
+      )}
+    </>
+  );
 
   return (
     <GestureHandlerRootView>
