@@ -2,7 +2,6 @@ import { Text, View, StyleSheet } from "react-native";
 import React, { useState, useEffect, useRef } from "react";
 import { FlatList, GestureHandlerRootView } from "react-native-gesture-handler";
 import { WebView } from "react-native-webview";
-import client from "../services/contentfulService";
 import { RadioButton } from "../components/RadioButton";
 import { scrollToSymptom } from "../constants/InjectedJavascript";
 import config from "../config";
@@ -25,8 +24,6 @@ export default function Index() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const entry = await client.getEntry(config.QUESTIONS_ENTRY_ID);
-        setQuestionsData(entry.fields.questions.questions);
       } catch (error) {
         console.error(error);
       }
