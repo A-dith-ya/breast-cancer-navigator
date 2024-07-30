@@ -5,6 +5,7 @@ import { WebView } from "react-native-webview";
 import client from "../services/contentfulService";
 import { RadioButton } from "../components/RadioButton";
 import { scrollToSymptom } from "../constants/InjectedJavascript";
+import config from "../config";
 
 interface Question {
   question: string;
@@ -24,7 +25,7 @@ export default function Index() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const entry = await client.getEntry("3lRhUvpZ7NaUuPyVtarAZ");
+        const entry = await client.getEntry(config.QUESTIONS_ENTRY_ID);
         setQuestionsData(entry.fields.questions.questions);
       } catch (error) {
         console.error(error);
@@ -55,7 +56,7 @@ export default function Index() {
       ref={webviewRef}
       style={styles.webview}
       source={{
-        uri: "https://cancercareinnovationlab.ca/managing-symptom-distress",
+        uri: config.WEBVIEW_URI,
       }}
       onLoad={() =>
         webviewRef.current?.injectJavaScript(scrollToSymptom(filter))
