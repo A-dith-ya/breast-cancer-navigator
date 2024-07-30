@@ -3,6 +3,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { FlatList, GestureHandlerRootView } from "react-native-gesture-handler";
 import { WebView } from "react-native-webview";
 import { RadioButton } from "../components/RadioButton";
+import { client } from "../services/sanityService";
 import { scrollToSymptom } from "../constants/InjectedJavascript";
 import config from "../config";
 
@@ -24,6 +25,9 @@ export default function Index() {
   useEffect(() => {
     const fetchData = async () => {
       try {
+        const CONTENT_QUERY = `*[_type == "questions"]`;
+        const content = await client.fetch(CONTENT_QUERY);
+        setQuestionsData(JSON.parse(content[0].question).questions);
       } catch (error) {
         console.error(error);
       }
