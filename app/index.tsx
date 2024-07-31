@@ -28,6 +28,7 @@ export default function Index() {
   const [questionNumber, setQuestionNumber] = useState(0);
   const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
   const webviewRef = useRef<WebView>(null);
+  const [webViewUri, setWebViewUri] = useState("");
   const colors = Colors[useColorScheme() ?? "light"];
 
   useEffect(() => {
@@ -65,7 +66,7 @@ export default function Index() {
       ref={webviewRef}
       style={styles.webview}
       source={{
-        uri: config.WEBVIEW_URI,
+        uri: webViewUri,
       }}
       onLoad={() =>
         webviewRef.current?.injectJavaScript(scrollToSymptom(filter))
@@ -109,6 +110,19 @@ export default function Index() {
         renderWebView(item.filter)}
     </>
   );
+
+  useEffect(() => {
+    switch (questionNumber) {
+      case 0:
+      case 1:
+        setWebViewUri(`${config.WEBVIEW_URI}/educational-resources`);
+        break;
+      case 2:
+      case 3:
+        setWebViewUri(`${config.WEBVIEW_URI}/managing-symptom-distress`);
+        break;
+    }
+  }, [questionNumber]);
 
   return (
     <GestureHandlerRootView>
