@@ -1,6 +1,6 @@
 import * as contentful from "contentful";
-import { contentfulConfig } from "../config";
+import config from "../config";
 
-const client = contentful.createClient(contentfulConfig);
+const client = contentful.createClient(config.CONTENTFUL_CLIENT);
 
 export default client;
