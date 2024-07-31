@@ -1,4 +1,6 @@
-import { View, TouchableOpacity, Text, StyleSheet } from "react-native";
+import { View, TouchableOpacity, StyleSheet } from "react-native";
+import { ThemedText } from "./ThemedText";
+import { useTheme } from "./ThemedContext";
 
 interface RadioButtonProps {
   label: string;
@@ -7,12 +9,16 @@ interface RadioButtonProps {
 }
 
 export function RadioButton({ label, selected, onPress }: RadioButtonProps) {
+  const { colors } = useTheme();
+
   return (
     <TouchableOpacity onPress={onPress} style={styles.container}>
-      <View style={styles.radio}>
-        {selected && <View style={styles.selected} />}
+      <View style={[styles.radio, { borderColor: colors.text }]}>
+        {selected && (
+          <View style={[styles.selected, { backgroundColor: colors.text }]} />
+        )}
       </View>
-      <Text style={styles.label}>{label}</Text>
+      <ThemedText style={styles.label}>{label}</ThemedText>
     </TouchableOpacity>
   );
 }
@@ -26,7 +32,6 @@ const styles = StyleSheet.create({
     height: 20,
     borderRadius: 10,
     borderWidth: 2,
-    borderColor: "#000",
     alignItems: "center",
     justifyContent: "center",
     marginRight: 8,
@@ -38,7 +43,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#000",
   },
   label: {
-    fontSize: 16,
-    marginTop: 2,
+    fontSize: 14,
+    marginBottom: 8,
   },
 });

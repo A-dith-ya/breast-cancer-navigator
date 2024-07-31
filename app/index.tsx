@@ -1,4 +1,10 @@
-import { Text, View, StyleSheet } from "react-native";
+import {
+  Text,
+  View,
+  TouchableOpacity,
+  StyleSheet,
+  useColorScheme,
+} from "react-native";
 import React, { useState, useEffect, useRef } from "react";
 import { FlatList, GestureHandlerRootView } from "react-native-gesture-handler";
 import { WebView } from "react-native-webview";
@@ -6,6 +12,7 @@ import { RadioButton } from "../components/RadioButton";
 import { client } from "../services/sanityService";
 import { scrollToSymptom } from "../constants/InjectedJavascript";
 import config from "../config";
+import { Colors } from "../constants/Colors";
 
 interface Question {
   question: string;
@@ -21,6 +28,8 @@ export default function Index() {
   const [questionNumber, setQuestionNumber] = useState(0);
   const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
   const webviewRef = useRef<WebView>(null);
+  const [webViewUri, setWebViewUri] = useState("");
+  const colors = Colors[useColorScheme() ?? "light"];
 
   useEffect(() => {
     const fetchData = async () => {
@@ -57,7 +66,7 @@ export default function Index() {
       ref={webviewRef}
       style={styles.webview}
       source={{
-        uri: config.WEBVIEW_URI,
+        uri: webViewUri,
       }}
       onLoad={() =>
         webviewRef.current?.injectJavaScript(scrollToSymptom(filter))
@@ -102,6 +111,19 @@ export default function Index() {
     </>
   );
 
+  useEffect(() => {
+    switch (questionNumber) {
+      case 0:
+      case 1:
+        setWebViewUri(`${config.WEBVIEW_URI}/educational-resources`);
+        break;
+      case 2:
+      case 3:
+        setWebViewUri(`${config.WEBVIEW_URI}/managing-symptom-distress`);
+        break;
+    }
+  }, [questionNumber]);
+
   return (
     <GestureHandlerRootView>
       <View style={styles.container}>
@@ -117,6 +139,21 @@ export default function Index() {
               renderItem={renderOptionItem}
               keyExtractor={(item) => item.option}
             />
+            <TouchableOpacity
+              style={[
+                styles.nextButton,
+                { backgroundColor: colors.background },
+              ]}
+              onPress={() => {
+                if (questionNumber < questionsData.length - 1) {
+                  setQuestionNumber(questionNumber + 1);
+                }
+              }}
+            >
+              <Text style={[styles.nextText, { color: colors.text }]}>
+                Next
+              </Text>
+            </TouchableOpacity>
           </>
         )}
       </View>
@@ -142,4 +179,9 @@ const styles = StyleSheet.create({
     width: 300,
     height: 300,
   },
+  nextButton: {
+    padding: 16,
+    borderRadius: 8,
+  },
+  nextText: { fontSize: 12 },
 });
