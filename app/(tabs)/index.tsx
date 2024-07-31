@@ -1,18 +1,14 @@
-import {
-  Text,
-  View,
-  TouchableOpacity,
-  StyleSheet,
-  useColorScheme,
-} from "react-native";
+import { TouchableOpacity, StyleSheet } from "react-native";
 import React, { useState, useEffect, useRef } from "react";
 import { FlatList, GestureHandlerRootView } from "react-native-gesture-handler";
 import { WebView } from "react-native-webview";
-import { RadioButton } from "../components/RadioButton";
-import { client } from "../services/sanityService";
-import { scrollToSymptom } from "../constants/InjectedJavascript";
-import config from "../config";
-import { Colors } from "../constants/Colors";
+import { RadioButton } from "../../components/RadioButton";
+import { ThemedView } from "../../components/ThemedView";
+import { ThemedText } from "../../components/ThemedText";
+import { useTheme } from "../../components/ThemedContext";
+import { client } from "../../services/sanityService";
+import { scrollToSymptom } from "../../constants/InjectedJavascript";
+import config from "../../config";
 
 interface Question {
   question: string;
@@ -23,13 +19,13 @@ interface Question {
   }[];
 }
 
-export default function Index() {
+export default function QuestionScreen() {
   const [questionsData, setQuestionsData] = useState<Question[]>([]);
   const [questionNumber, setQuestionNumber] = useState(0);
   const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
   const webviewRef = useRef<WebView>(null);
   const [webViewUri, setWebViewUri] = useState("");
-  const colors = Colors[useColorScheme() ?? "light"];
+  const { colors } = useTheme();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -93,7 +89,7 @@ export default function Index() {
     item: Question["options"][number];
   }) => (
     <>
-      <Text style={styles.optionText}>{item.option}</Text>
+      <ThemedText style={styles.optionText}>{item.option}</ThemedText>
       {!item.subOptions ? (
         renderRadioButton(item.option)
       ) : (
@@ -126,23 +122,24 @@ export default function Index() {
 
   return (
     <GestureHandlerRootView>
-      <View style={styles.container}>
+      <ThemedView style={styles.container}>
         {questionsData.length === 0 ? (
-          <Text>Loading...</Text>
+          <ThemedText>Loading...</ThemedText>
         ) : (
           <>
-            <Text style={styles.questionText}>
+            <ThemedText style={styles.questionText}>
               {questionsData[questionNumber].question}
-            </Text>
+            </ThemedText>
             <FlatList
               data={questionsData[questionNumber].options}
               renderItem={renderOptionItem}
               keyExtractor={(item) => item.option}
+              style={styles.flatListContainer}
             />
             <TouchableOpacity
               style={[
                 styles.nextButton,
-                { backgroundColor: colors.background },
+                { backgroundColor: colors.tabIconDefault },
               ]}
               onPress={() => {
                 if (questionNumber < questionsData.length - 1) {
@@ -150,13 +147,11 @@ export default function Index() {
                 }
               }}
             >
-              <Text style={[styles.nextText, { color: colors.text }]}>
-                Next
-              </Text>
+              <ThemedText>Next</ThemedText>
             </TouchableOpacity>
           </>
         )}
-      </View>
+      </ThemedView>
     </GestureHandlerRootView>
   );
 }
@@ -164,24 +159,26 @@ export default function Index() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "center",
+    padding: 16,
     alignItems: "center",
+  },
+  flatListContainer: {
+    width: 320,
   },
   questionText: {
     fontSize: 20,
-    marginBottom: 16,
   },
   optionText: {
     fontSize: 16,
-    marginBottom: 8,
+    marginVertical: 8,
   },
   webview: {
     width: 300,
     height: 300,
+    marginBottom: 16,
   },
   nextButton: {
-    padding: 16,
-    borderRadius: 8,
+    padding: 8,
+    borderRadius: 4,
   },
-  nextText: { fontSize: 12 },
 });
