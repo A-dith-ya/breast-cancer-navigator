@@ -2,6 +2,7 @@ import { TouchableOpacity, StyleSheet } from "react-native";
 import React, { useState, useEffect, useRef } from "react";
 import { FlatList, GestureHandlerRootView } from "react-native-gesture-handler";
 import { WebView } from "react-native-webview";
+import { useLocalSearchParams, router } from "expo-router";
 import { RadioButton } from "../../components/RadioButton";
 import { ThemedView } from "../../components/ThemedView";
 import { ThemedText } from "../../components/ThemedText";
@@ -26,6 +27,7 @@ export default function QuestionScreen() {
   const webviewRef = useRef<WebView>(null);
   const [webViewUri, setWebViewUri] = useState("");
   const { colors } = useTheme();
+  const local = useLocalSearchParams();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -120,6 +122,14 @@ export default function QuestionScreen() {
     }
   }, [questionNumber]);
 
+  useEffect(() => {
+    if (local.reset) {
+      setQuestionNumber(0);
+      router.push("/", { reset: false });
+    }
+  }
+  , [local]);
+
   return (
     <GestureHandlerRootView>
       <ThemedView style={styles.container}>
@@ -144,6 +154,8 @@ export default function QuestionScreen() {
               onPress={() => {
                 if (questionNumber < questionsData.length - 1) {
                   setQuestionNumber(questionNumber + 1);
+                } else {
+                  router.push("complete");
                 }
               }}
             >
