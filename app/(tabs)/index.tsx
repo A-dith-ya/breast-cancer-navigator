@@ -15,7 +15,7 @@ interface Question {
   question: string;
   options: {
     option: string;
-    subOptions: string[];
+    subOptions: string[] | { subOption: string; filter: string }[];
     filter?: string;
   }[];
 }
@@ -74,14 +74,20 @@ export default function QuestionScreen() {
 
   const renderSuboptionItem = ({
     item,
-    filter,
   }: {
-    item: string;
-    filter?: string;
+    item: Question["options"][number]["subOptions"][number];
   }) => (
     <>
-      {renderRadioButton(item)}
-      {selectedOptions.includes(item) && filter && renderWebView(filter)}
+      {typeof item === "object" ? (
+        <>
+          {renderRadioButton(item.subOption)}
+          {selectedOptions.includes(item.subOption) &&
+            item.filter &&
+            renderWebView(item.filter)}
+        </>
+      ) : (
+        renderRadioButton(item)
+      )}
     </>
   );
 
@@ -91,21 +97,28 @@ export default function QuestionScreen() {
     item: Question["options"][number];
   }) => (
     <>
-      <ThemedText style={styles.optionText}>{item.option}</ThemedText>
-      {!item.subOptions ? (
-        renderRadioButton(item.option)
+      {item.subOptions && typeof item.subOptions[0] === "object" ? (
+        <>
+          <ThemedText style={styles.optionText}>{item.option}</ThemedText>
+          <FlatList
+            data={item.subOptions}
+            renderItem={renderSuboptionItem}
+            keyExtractor={(item) => item.subOption}
+            style={styles.flatListContainer}
+          />
+        </>
       ) : (
-        <FlatList
-          data={item.subOptions}
-          renderItem={({ item: subOptionItem }) =>
-            renderSuboptionItem({ item: subOptionItem, filter: item.filter })
-          }
-          keyExtractor={(item) => item}
-        />
+        <>
+          {renderRadioButton(item.option)}
+          {item.subOptions &&
+            item.subOptions.map((subOption) => (
+              <ThemedText style={styles.subOptionText}>{subOption}</ThemedText>
+            ))}
+          {selectedOptions.includes(item.option) &&
+            item.filter &&
+            renderWebView(item.filter)}
+        </>
       )}
-      {selectedOptions.includes(item.option) &&
-        item.filter &&
-        renderWebView(item.filter)}
     </>
   );
 
@@ -127,8 +140,7 @@ export default function QuestionScreen() {
       setQuestionNumber(0);
       router.push("/", { reset: false });
     }
-  }
-  , [local]);
+  }, [local]);
 
   return (
     <GestureHandlerRootView>
@@ -183,6 +195,11 @@ const styles = StyleSheet.create({
   optionText: {
     fontSize: 16,
     marginVertical: 8,
+  },
+  subOptionText: {
+    fontSize: 14,
+    paddingLeft: 16,
+    marginBottom: 8,
   },
   webview: {
     width: 300,

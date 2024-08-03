@@ -43,7 +43,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#000",
   },
   label: {
-    fontSize: 14,
+    fontSize: 16,
     marginBottom: 8,
   },
 });
