@@ -15,16 +15,19 @@ interface Question {
   question: string;
   options: {
     option: string;
-    subOptions: string[];
+    subOptions: string[] | { subOption: string; filter: string }[];
     filter?: string;
+    uri?: string;
   }[];
 }
 
 export default function QuestionScreen() {
   const [questionsData, setQuestionsData] = useState<Question[]>([]);
   const [questionNumber, setQuestionNumber] = useState(0);
-  const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
-  const webviewRef = useRef<WebView>(null);
+  const [selectedOptions, setSelectedOptions] = useState<{
+    [key: number]: string[];
+  }>({});
+  const webviewRefs = useRef<WebView[]>([]);
   const [webViewUri, setWebViewUri] = useState("");
   const { colors } = useTheme();
   const local = useLocalSearchParams();
@@ -33,6 +36,7 @@ export default function QuestionScreen() {
     const fetchData = async () => {
       try {
         const CONTENT_QUERY = `*[_type == "questions"]`;
+        // Fetch questions data from Sanity
         const content = await client.fetch(CONTENT_QUERY);
         setQuestionsData(JSON.parse(content[0].question).questions);
       } catch (error) {
@@ -43,73 +47,124 @@ export default function QuestionScreen() {
     fetchData();
   }, []);
 
+  // Handle selection of options and suboptions in each question separately
   const handleSelectOption = (option: string) => {
-    if (selectedOptions.includes(option)) {
-      setSelectedOptions(selectedOptions.filter((item) => item !== option));
+    const currentSelectedOptions =
+      selectedOptions[Math.floor(questionNumber)] || [];
+    // If the option is already selected, remove it from the selected options
+    if (currentSelectedOptions.includes(option)) {
+      setSelectedOptions({
+        ...selectedOptions,
+        [Math.floor(questionNumber)]: currentSelectedOptions.filter(
+          (item) => item !== option
+        ),
+      });
     } else {
-      setSelectedOptions([...selectedOptions, option]);
+      setSelectedOptions({
+        ...selectedOptions,
+        [Math.floor(questionNumber)]: [...currentSelectedOptions, option],
+      });
     }
   };
 
   const renderRadioButton = (option: string) => (
     <RadioButton
       label={option}
-      selected={selectedOptions.includes(option)}
+      selected={
+        selectedOptions[Math.floor(questionNumber)]?.includes(option) || false
+      }
       onPress={() => handleSelectOption(option)}
     />
   );
 
-  const renderWebView = (filter: string) => (
-    <WebView
-      ref={webviewRef}
-      style={styles.webview}
-      source={{
-        uri: webViewUri,
-      }}
-      onLoad={() =>
-        webviewRef.current?.injectJavaScript(scrollToSymptom(filter))
-      }
-    />
-  );
+  const renderWebView = (
+    filter: string,
+    index: number,
+    customWebViewUri?: string
+  ) =>
+    // Render webview only after the user navigates completely through the question screen
+    questionNumber % 1 === 0.5 ? (
+      <WebView
+        ref={(ref) => (webviewRefs.current[index] = ref!)}
+        style={styles.webview}
+        source={{
+          uri: customWebViewUri || webViewUri,
+        }}
+        onLoad={() =>
+          webviewRefs.current[index]?.injectJavaScript(scrollToSymptom(filter))
+        }
+      />
+    ) : null;
 
   const renderSuboptionItem = ({
     item,
-    filter,
+    index,
+    customWebViewUri,
   }: {
-    item: string;
-    filter?: string;
+    item: Question["options"][number]["subOptions"][number];
+    index: number;
+    customWebViewUri?: string;
   }) => (
     <>
-      {renderRadioButton(item)}
-      {selectedOptions.includes(item) && filter && renderWebView(filter)}
+      {typeof item === "object" ? (
+        <>
+          {renderRadioButton(item.subOption)}
+          {selectedOptions[Math.floor(questionNumber)]?.includes(
+            item.subOption
+          ) &&
+            item.filter &&
+            renderWebView(item.filter, index, customWebViewUri)}
+        </>
+      ) : (
+        renderRadioButton(item)
+      )}
     </>
   );
 
   const renderOptionItem = ({
     item,
+    index,
   }: {
     item: Question["options"][number];
+    index: number;
   }) => (
     <>
-      <ThemedText style={styles.optionText}>{item.option}</ThemedText>
-      {!item.subOptions ? (
-        renderRadioButton(item.option)
+      {item.subOptions && typeof item.subOptions[0] === "object" ? (
+        <>
+          <ThemedText style={styles.optionText}>{item.option}</ThemedText>
+          <FlatList
+            data={item.subOptions}
+            renderItem={({ item: subItem, index: subIndex }) =>
+              renderSuboptionItem({
+                item: subItem,
+                // Add a unique index to each suboption webview ref
+                index: index * 10 + subIndex,
+                customWebViewUri: item.uri,
+              })
+            }
+            keyExtractor={(item) =>
+              typeof item === "object" ? item.subOption : item
+            }
+            style={styles.flatListContainer}
+          />
+        </>
       ) : (
-        <FlatList
-          data={item.subOptions}
-          renderItem={({ item: subOptionItem }) =>
-            renderSuboptionItem({ item: subOptionItem, filter: item.filter })
-          }
-          keyExtractor={(item) => item}
-        />
+        <>
+          {renderRadioButton(item.option)}
+          {item.subOptions &&
+            item.subOptions.map((subOption) => (
+              <ThemedText style={styles.subOptionText}>{subOption}</ThemedText>
+            ))}
+          {selectedOptions[Math.floor(questionNumber)]?.includes(item.option) &&
+            item.filter &&
+            renderWebView(item.filter, index)}
+        </>
       )}
-      {selectedOptions.includes(item.option) &&
-        item.filter &&
-        renderWebView(item.filter)}
     </>
   );
 
   useEffect(() => {
+    // Update the webview uri based on the current question number
     switch (questionNumber) {
       case 0:
       case 1:
@@ -124,11 +179,12 @@ export default function QuestionScreen() {
 
   useEffect(() => {
     if (local.reset) {
+      // Reset the screen state when the user retakes the assessment
       setQuestionNumber(0);
+      setSelectedOptions({});
       router.push("/", { reset: false });
     }
-  }
-  , [local]);
+  }, [local]);
 
   return (
     <GestureHandlerRootView>
@@ -138,29 +194,46 @@ export default function QuestionScreen() {
         ) : (
           <>
             <ThemedText style={styles.questionText}>
-              {questionsData[questionNumber].question}
+              {questionsData[Math.floor(questionNumber)].question}
             </ThemedText>
             <FlatList
-              data={questionsData[questionNumber].options}
-              renderItem={renderOptionItem}
+              data={questionsData[Math.floor(questionNumber)].options}
+              renderItem={({ item, index }) =>
+                renderOptionItem({ item, index })
+              }
               keyExtractor={(item) => item.option}
               style={styles.flatListContainer}
             />
-            <TouchableOpacity
-              style={[
-                styles.nextButton,
-                { backgroundColor: colors.tabIconDefault },
-              ]}
-              onPress={() => {
-                if (questionNumber < questionsData.length - 1) {
-                  setQuestionNumber(questionNumber + 1);
-                } else {
-                  router.push("complete");
-                }
-              }}
-            >
-              <ThemedText>Next</ThemedText>
-            </TouchableOpacity>
+            <ThemedView style={styles.buttonContainer}>
+              <TouchableOpacity
+                style={[
+                  styles.nextButton,
+                  { backgroundColor: colors.tabIconDefault },
+                ]}
+                onPress={() => {
+                  if (questionNumber < questionsData.length - 0.5) {
+                    setQuestionNumber(questionNumber + 0.5);
+                  } else {
+                    router.push("complete");
+                  }
+                }}
+              >
+                <ThemedText>Next</ThemedText>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[
+                  styles.nextButton,
+                  { backgroundColor: colors.tabIconDefault },
+                ]}
+                onPress={() => {
+                  if (questionNumber > 0) {
+                    setQuestionNumber(questionNumber - 0.5);
+                  }
+                }}
+              >
+                <ThemedText>Back</ThemedText>
+              </TouchableOpacity>
+            </ThemedView>
           </>
         )}
       </ThemedView>
@@ -184,10 +257,20 @@ const styles = StyleSheet.create({
     fontSize: 16,
     marginVertical: 8,
   },
+  subOptionText: {
+    fontSize: 14,
+    paddingLeft: 16,
+    marginBottom: 8,
+  },
   webview: {
     width: 300,
     height: 300,
     marginBottom: 16,
+  },
+  buttonContainer: {
+    width: 320,
+    flexDirection: "row",
+    justifyContent: "space-around",
   },
   nextButton: {
     padding: 8,
