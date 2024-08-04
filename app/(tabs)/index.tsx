@@ -24,7 +24,7 @@ export default function QuestionScreen() {
   const [questionsData, setQuestionsData] = useState<Question[]>([]);
   const [questionNumber, setQuestionNumber] = useState(0);
   const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
-  const webviewRef = useRef<WebView>(null);
+  const webviewRefs = useRef<WebView[]>([]);
   const [webViewUri, setWebViewUri] = useState("");
   const { colors } = useTheme();
   const local = useLocalSearchParams();
@@ -59,23 +59,26 @@ export default function QuestionScreen() {
     />
   );
 
-  const renderWebView = (filter: string) => (
-    <WebView
-      ref={webviewRef}
-      style={styles.webview}
-      source={{
-        uri: webViewUri,
-      }}
-      onLoad={() =>
-        webviewRef.current?.injectJavaScript(scrollToSymptom(filter))
-      }
-    />
-  );
+  const renderWebView = (filter: string, index: number) =>
+    questionNumber % 1 === 0.5 ? (
+      <WebView
+        ref={(ref) => (webviewRefs.current[index] = ref!)}
+        style={styles.webview}
+        source={{
+          uri: webViewUri,
+        }}
+        onLoad={() =>
+          webviewRefs.current[index]?.injectJavaScript(scrollToSymptom(filter))
+        }
+      />
+    ) : null;
 
   const renderSuboptionItem = ({
     item,
+    index,
   }: {
     item: Question["options"][number]["subOptions"][number];
+    index: number;
   }) => (
     <>
       {typeof item === "object" ? (
@@ -83,7 +86,7 @@ export default function QuestionScreen() {
           {renderRadioButton(item.subOption)}
           {selectedOptions.includes(item.subOption) &&
             item.filter &&
-            renderWebView(item.filter)}
+            renderWebView(item.filter, index)}
         </>
       ) : (
         renderRadioButton(item)
@@ -93,8 +96,10 @@ export default function QuestionScreen() {
 
   const renderOptionItem = ({
     item,
+    index,
   }: {
     item: Question["options"][number];
+    index: number;
   }) => (
     <>
       {item.subOptions && typeof item.subOptions[0] === "object" ? (
@@ -102,7 +107,9 @@ export default function QuestionScreen() {
           <ThemedText style={styles.optionText}>{item.option}</ThemedText>
           <FlatList
             data={item.subOptions}
-            renderItem={renderSuboptionItem}
+            renderItem={({ item, index }) =>
+              renderSuboptionItem({ item, index })
+            }
             keyExtractor={(item) => item.subOption}
             style={styles.flatListContainer}
           />
@@ -116,7 +123,7 @@ export default function QuestionScreen() {
             ))}
           {selectedOptions.includes(item.option) &&
             item.filter &&
-            renderWebView(item.filter)}
+            renderWebView(item.filter, index)}
         </>
       )}
     </>
@@ -150,11 +157,13 @@ export default function QuestionScreen() {
         ) : (
           <>
             <ThemedText style={styles.questionText}>
-              {questionsData[questionNumber].question}
+              {questionsData[Math.floor(questionNumber)].question}
             </ThemedText>
             <FlatList
-              data={questionsData[questionNumber].options}
-              renderItem={renderOptionItem}
+              data={questionsData[Math.floor(questionNumber)].options}
+              renderItem={({ item, index }) =>
+                renderOptionItem({ item, index })
+              }
               keyExtractor={(item) => item.option}
               style={styles.flatListContainer}
             />
@@ -164,8 +173,8 @@ export default function QuestionScreen() {
                 { backgroundColor: colors.tabIconDefault },
               ]}
               onPress={() => {
-                if (questionNumber < questionsData.length - 1) {
-                  setQuestionNumber(questionNumber + 1);
+                if (questionNumber < questionsData.length - 0.5) {
+                  setQuestionNumber(questionNumber + 0.5);
                 } else {
                   router.push("complete");
                 }
