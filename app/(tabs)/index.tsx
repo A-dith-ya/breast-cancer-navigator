@@ -17,13 +17,16 @@ interface Question {
     option: string;
     subOptions: string[] | { subOption: string; filter: string }[];
     filter?: string;
+    uri?: string;
   }[];
 }
 
 export default function QuestionScreen() {
   const [questionsData, setQuestionsData] = useState<Question[]>([]);
   const [questionNumber, setQuestionNumber] = useState(0);
-  const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
+  const [selectedOptions, setSelectedOptions] = useState<{
+    [key: number]: string[];
+  }>({});
   const webviewRefs = useRef<WebView[]>([]);
   const [webViewUri, setWebViewUri] = useState("");
   const { colors } = useTheme();
@@ -44,28 +47,43 @@ export default function QuestionScreen() {
   }, []);
 
   const handleSelectOption = (option: string) => {
-    if (selectedOptions.includes(option)) {
-      setSelectedOptions(selectedOptions.filter((item) => item !== option));
+    const currentSelectedOptions =
+      selectedOptions[Math.floor(questionNumber)] || [];
+    if (currentSelectedOptions.includes(option)) {
+      setSelectedOptions({
+        ...selectedOptions,
+        [Math.floor(questionNumber)]: currentSelectedOptions.filter(
+          (item) => item !== option
+        ),
+      });
     } else {
-      setSelectedOptions([...selectedOptions, option]);
+      setSelectedOptions({
+        ...selectedOptions,
+        [Math.floor(questionNumber)]: [...currentSelectedOptions, option],
+      });
     }
   };
 
   const renderRadioButton = (option: string) => (
     <RadioButton
       label={option}
-      selected={selectedOptions.includes(option)}
+      selected={
+        selectedOptions[Math.floor(questionNumber)]?.includes(option) || false
+      }
       onPress={() => handleSelectOption(option)}
     />
   );
-
-  const renderWebView = (filter: string, index: number) =>
+  const renderWebView = (
+    filter: string,
+    index: number,
+    customWebViewUri?: string
+  ) =>
     questionNumber % 1 === 0.5 ? (
       <WebView
         ref={(ref) => (webviewRefs.current[index] = ref!)}
         style={styles.webview}
         source={{
-          uri: webViewUri,
+          uri: customWebViewUri || webViewUri,
         }}
         onLoad={() =>
           webviewRefs.current[index]?.injectJavaScript(scrollToSymptom(filter))
@@ -76,17 +94,21 @@ export default function QuestionScreen() {
   const renderSuboptionItem = ({
     item,
     index,
+    customWebViewUri,
   }: {
     item: Question["options"][number]["subOptions"][number];
     index: number;
+    customWebViewUri?: string;
   }) => (
     <>
       {typeof item === "object" ? (
         <>
           {renderRadioButton(item.subOption)}
-          {selectedOptions.includes(item.subOption) &&
+          {selectedOptions[Math.floor(questionNumber)]?.includes(
+            item.subOption
+          ) &&
             item.filter &&
-            renderWebView(item.filter, index)}
+            renderWebView(item.filter, index, customWebViewUri)}
         </>
       ) : (
         renderRadioButton(item)
@@ -107,10 +129,16 @@ export default function QuestionScreen() {
           <ThemedText style={styles.optionText}>{item.option}</ThemedText>
           <FlatList
             data={item.subOptions}
-            renderItem={({ item, index }) =>
-              renderSuboptionItem({ item, index })
+            renderItem={({ item: subItem, index: subIndex }) =>
+              renderSuboptionItem({
+                item: subItem,
+                index: index * 10 + subIndex,
+                customWebViewUri: item.uri,
+              })
             }
-            keyExtractor={(item) => item.subOption}
+            keyExtractor={(item) =>
+              typeof item === "object" ? item.subOption : item
+            }
             style={styles.flatListContainer}
           />
         </>
@@ -121,7 +149,7 @@ export default function QuestionScreen() {
             item.subOptions.map((subOption) => (
               <ThemedText style={styles.subOptionText}>{subOption}</ThemedText>
             ))}
-          {selectedOptions.includes(item.option) &&
+          {selectedOptions[Math.floor(questionNumber)]?.includes(item.option) &&
             item.filter &&
             renderWebView(item.filter, index)}
         </>
