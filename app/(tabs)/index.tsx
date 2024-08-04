@@ -36,6 +36,7 @@ export default function QuestionScreen() {
     const fetchData = async () => {
       try {
         const CONTENT_QUERY = `*[_type == "questions"]`;
+        // Fetch questions data from Sanity
         const content = await client.fetch(CONTENT_QUERY);
         setQuestionsData(JSON.parse(content[0].question).questions);
       } catch (error) {
@@ -46,9 +47,11 @@ export default function QuestionScreen() {
     fetchData();
   }, []);
 
+  // Handle selection of options and suboptions in each question separately
   const handleSelectOption = (option: string) => {
     const currentSelectedOptions =
       selectedOptions[Math.floor(questionNumber)] || [];
+    // If the option is already selected, remove it from the selected options
     if (currentSelectedOptions.includes(option)) {
       setSelectedOptions({
         ...selectedOptions,
@@ -73,11 +76,13 @@ export default function QuestionScreen() {
       onPress={() => handleSelectOption(option)}
     />
   );
+
   const renderWebView = (
     filter: string,
     index: number,
     customWebViewUri?: string
   ) =>
+    // Render webview only after the user navigates completely through the question screen
     questionNumber % 1 === 0.5 ? (
       <WebView
         ref={(ref) => (webviewRefs.current[index] = ref!)}
@@ -132,6 +137,7 @@ export default function QuestionScreen() {
             renderItem={({ item: subItem, index: subIndex }) =>
               renderSuboptionItem({
                 item: subItem,
+                // Add a unique index to each suboption webview ref
                 index: index * 10 + subIndex,
                 customWebViewUri: item.uri,
               })
@@ -158,6 +164,7 @@ export default function QuestionScreen() {
   );
 
   useEffect(() => {
+    // Update the webview uri based on the current question number
     switch (questionNumber) {
       case 0:
       case 1:
@@ -172,7 +179,9 @@ export default function QuestionScreen() {
 
   useEffect(() => {
     if (local.reset) {
+      // Reset the screen state when the user retakes the assessment
       setQuestionNumber(0);
+      setSelectedOptions({});
       router.push("/", { reset: false });
     }
   }, [local]);
@@ -195,21 +204,36 @@ export default function QuestionScreen() {
               keyExtractor={(item) => item.option}
               style={styles.flatListContainer}
             />
-            <TouchableOpacity
-              style={[
-                styles.nextButton,
-                { backgroundColor: colors.tabIconDefault },
-              ]}
-              onPress={() => {
-                if (questionNumber < questionsData.length - 0.5) {
-                  setQuestionNumber(questionNumber + 0.5);
-                } else {
-                  router.push("complete");
-                }
-              }}
-            >
-              <ThemedText>Next</ThemedText>
-            </TouchableOpacity>
+            <ThemedView style={styles.buttonContainer}>
+              <TouchableOpacity
+                style={[
+                  styles.nextButton,
+                  { backgroundColor: colors.tabIconDefault },
+                ]}
+                onPress={() => {
+                  if (questionNumber < questionsData.length - 0.5) {
+                    setQuestionNumber(questionNumber + 0.5);
+                  } else {
+                    router.push("complete");
+                  }
+                }}
+              >
+                <ThemedText>Next</ThemedText>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[
+                  styles.nextButton,
+                  { backgroundColor: colors.tabIconDefault },
+                ]}
+                onPress={() => {
+                  if (questionNumber > 0) {
+                    setQuestionNumber(questionNumber - 0.5);
+                  }
+                }}
+              >
+                <ThemedText>Back</ThemedText>
+              </TouchableOpacity>
+            </ThemedView>
           </>
         )}
       </ThemedView>
@@ -242,6 +266,11 @@ const styles = StyleSheet.create({
     width: 300,
     height: 300,
     marginBottom: 16,
+  },
+  buttonContainer: {
+    width: 320,
+    flexDirection: "row",
+    justifyContent: "space-around",
   },
   nextButton: {
     padding: 8,
