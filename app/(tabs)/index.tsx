@@ -1,4 +1,4 @@
-import { TouchableOpacity, StyleSheet } from "react-native";
+import { TouchableOpacity, Image, StyleSheet } from "react-native";
 import React, { useState, useEffect, useRef } from "react";
 import { FlatList, GestureHandlerRootView } from "react-native-gesture-handler";
 import { WebView } from "react-native-webview";
@@ -21,6 +21,12 @@ interface Question {
   }[];
 }
 
+interface Image {
+  questionIndex: number;
+  optionIndex: number;
+  imageUrl: string;
+}
+
 export default function QuestionScreen() {
   const [questionsData, setQuestionsData] = useState<Question[]>([]);
   const [questionNumber, setQuestionNumber] = useState(0);
@@ -31,13 +37,22 @@ export default function QuestionScreen() {
   const [webViewUri, setWebViewUri] = useState("");
   const { colors } = useTheme();
   const local = useLocalSearchParams();
+  let optionImages = useRef<Image[]>([]);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const CONTENT_QUERY = `*[_type == "questions"]`;
+        const CONTENT_QUERY = `*[_type == "questions"] {
+        question,
+        "images": Images[]{
+          "questionIndex": questionIndex,
+          "optionIndex": optionIndex,
+          "imageUrl": image.asset->url
+        }
+        }`;
         // Fetch questions data from Sanity
         const content = await client.fetch(CONTENT_QUERY);
+        optionImages.current = content[0].images;
         setQuestionsData(JSON.parse(content[0].question).questions);
       } catch (error) {
         console.error(error);
@@ -121,6 +136,19 @@ export default function QuestionScreen() {
     </>
   );
 
+  const renderImage = (questionIndex: number, optionIndex: number) => {
+    // Find the image for the current question and option
+    const image = optionImages.current.find(
+      (image) =>
+        image.questionIndex === questionIndex &&
+        image.optionIndex === optionIndex
+    );
+
+    return image ? (
+      <Image source={{ uri: image.imageUrl }} style={styles.webview} />
+    ) : null;
+  };
+
   const renderOptionItem = ({
     item,
     index,
@@ -160,6 +188,8 @@ export default function QuestionScreen() {
             renderWebView(item.filter, index)}
         </>
       )}
+      {questionNumber % 1 === 0 &&
+        renderImage(Math.floor(questionNumber), index)}
     </>
   );
 
