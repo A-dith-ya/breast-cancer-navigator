@@ -8,7 +8,7 @@ const { width, height } = Dimensions.get("window");
 export default function CompleteScreen() {
   return (
     <ThemedView style={styles.container}>
-      <ThemedText type="title" style={styles.title}>
+      <ThemedText type="title">
         You have completed the Breast Cancer Navigator
       </ThemedText>
       <Link replace href={{ pathname: "/(tabs)/", params: { reset: true } }}>
@@ -26,9 +26,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     padding: width * 0.05,
   },
-  title: {
-    marginBottom: height * 0.05,
-  },
+
   link: {
     fontSize: width * 0.065,
   },

@@ -37,6 +37,7 @@ export default function TabLayout() {
           name="complete"
           options={{
             title: "Navigator Completion",
+            tabBarStyle: { backgroundColor: colors.background },
             tabBarIcon: ({ color, focused }) => (
               <TabBarIcon
                 name={

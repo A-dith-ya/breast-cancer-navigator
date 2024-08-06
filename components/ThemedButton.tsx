@@ -4,7 +4,7 @@ import {
   StyleSheet,
   Dimensions,
 } from "react-native";
-import { ThemedText } from "./ThemedText";
+import { ThemedText, type ThemedTextProps } from "./ThemedText";
 
 import { useThemeColor } from "@/hooks/useThemeColor";
 
@@ -14,6 +14,7 @@ export type ThemedButtonProps = TouchableOpacityProps & {
   lightColor?: string;
   darkColor?: string;
   text?: string;
+  type?: ThemedTextProps["type"];
   onPress?: () => void;
 };
 
@@ -22,6 +23,7 @@ export function ThemedButton({
   lightColor,
   darkColor,
   text,
+  type = "default",
   onPress,
   ...rest
 }: ThemedButtonProps) {
@@ -36,7 +38,7 @@ export function ThemedButton({
       onPress={onPress}
       {...rest}
     >
-      <ThemedText>{text}</ThemedText>
+      <ThemedText type={type}>{text}</ThemedText>
     </TouchableOpacity>
   );
 }

@@ -25,6 +25,20 @@ export default function InfoLayout() {
             ),
           }}
         />
+        <Tabs.Screen
+          name="info"
+          options={{
+            title: "Instructions",
+            tabBarIcon: ({ color, focused }) => (
+              <TabBarIcon
+                name={
+                  focused ? "information-circle" : "information-circle-outline"
+                }
+                color={color}
+              />
+            ),
+          }}
+        />
       </Tabs>
     </ThemeProvider>
   );

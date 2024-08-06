@@ -1,10 +1,4 @@
-import {
-  TouchableOpacity,
-  Image,
-  ActivityIndicator,
-  StyleSheet,
-  Dimensions,
-} from "react-native";
+import { Image, ActivityIndicator, StyleSheet, Dimensions } from "react-native";
 import React, { useState, useEffect, useRef } from "react";
 import { FlatList, GestureHandlerRootView } from "react-native-gesture-handler";
 import { WebView } from "react-native-webview";
@@ -288,9 +282,11 @@ const styles = StyleSheet.create({
   },
   flatListContainer: {
     padding: width * 0.01,
+    width: width * 0.95,
   },
   questionText: {
     fontSize: width * 0.05,
+    width: width * 0.9,
   },
   optionText: {
     fontSize: width * 0.046,
