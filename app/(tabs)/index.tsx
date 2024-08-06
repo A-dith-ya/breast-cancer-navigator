@@ -3,6 +3,7 @@ import {
   Image,
   ActivityIndicator,
   StyleSheet,
+  Dimensions,
 } from "react-native";
 import React, { useState, useEffect, useRef } from "react";
 import { FlatList, GestureHandlerRootView } from "react-native-gesture-handler";
@@ -16,6 +17,8 @@ import { client } from "@/services/sanityService";
 import { SCROLL_TO_SYMPTOM } from "@/constants/InjectedJavascript";
 import config from "@/config";
 import { CONTENT_QUERY } from "@/constants/Queries";
+
+const { width, height } = Dimensions.get("window");
 
 interface Question {
   question: string;
@@ -290,36 +293,37 @@ export default function QuestionScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 16,
     alignItems: "center",
+    justifyContent: "center",
+    padding: width * 0.01,
   },
   flatListContainer: {
-    width: 320,
+    padding: width * 0.01,
   },
   questionText: {
-    fontSize: 20,
+    fontSize: width * 0.05,
   },
   optionText: {
-    fontSize: 16,
-    marginVertical: 8,
+    fontSize: width * 0.046,
+    marginLeft: width * 0.032,
   },
   subOptionText: {
-    fontSize: 14,
-    paddingLeft: 16,
-    marginBottom: 8,
+    fontSize: width * 0.042,
+    marginLeft: width * 0.11,
   },
   webview: {
-    width: 300,
-    height: 300,
-    marginBottom: 16,
+    width: width * 0.85,
+    height: height * 0.45,
+    marginVertical: height * 0.01,
+    marginHorizontal: width * 0.05,
   },
   buttonContainer: {
-    width: 320,
+    width: width * 0.9,
     flexDirection: "row",
     justifyContent: "space-around",
   },
   nextButton: {
-    padding: 8,
-    borderRadius: 4,
+    padding: width * 0.03,
+    borderRadius: (width * 0.03) / 2,
   },
 });
