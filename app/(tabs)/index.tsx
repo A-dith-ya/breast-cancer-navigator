@@ -12,7 +12,7 @@ import { useLocalSearchParams, router } from "expo-router";
 import { RadioButton } from "@/components/RadioButton";
 import { ThemedView } from "@/components/ThemedView";
 import { ThemedText } from "@/components/ThemedText";
-import { useTheme } from "@/components/ThemedContext";
+import { ThemedButton } from "@/components/ThemedButton";
 import { client } from "@/services/sanityService";
 import { SCROLL_TO_SYMPTOM } from "@/constants/InjectedJavascript";
 import config from "@/config";
@@ -44,7 +44,6 @@ export default function QuestionScreen() {
   }>({});
   const webviewRefs = useRef<WebView[]>([]);
   const [webViewUri, setWebViewUri] = useState("");
-  const { colors } = useTheme();
   const local = useLocalSearchParams();
   let optionImages = useRef<Image[]>([]);
   const flatListRef = useRef<FlatList>(null);
@@ -213,7 +212,7 @@ export default function QuestionScreen() {
       // Reset the screen state when the user retakes the assessment
       setQuestionNumber(0);
       setSelectedOptions({});
-      router.push("/", { reset: false });
+      router.replace("/(tabs)/", { reset: false });
     }
   }, [local]);
 
@@ -252,11 +251,8 @@ export default function QuestionScreen() {
               style={styles.flatListContainer}
             />
             <ThemedView style={styles.buttonContainer}>
-              <TouchableOpacity
-                style={[
-                  styles.nextButton,
-                  { backgroundColor: colors.tabIconDefault },
-                ]}
+              <ThemedButton
+                text={questionNumber % 1 === 0.5 ? "Next" : "Info"}
                 onPress={() => {
                   if (questionNumber < questionsData.length - 0.5) {
                     setQuestionNumber(questionNumber + 0.5);
@@ -265,23 +261,16 @@ export default function QuestionScreen() {
                     router.push("complete");
                   }
                 }}
-              >
-                <ThemedText>Next</ThemedText>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={[
-                  styles.nextButton,
-                  { backgroundColor: colors.tabIconDefault },
-                ]}
+              />
+              <ThemedButton
+                text="Back"
                 onPress={() => {
                   if (questionNumber > 0) {
                     setQuestionNumber(questionNumber - 0.5);
                     scrollToTop();
                   }
                 }}
-              >
-                <ThemedText>Back</ThemedText>
-              </TouchableOpacity>
+              />
             </ThemedView>
           </>
         )}
@@ -321,9 +310,5 @@ const styles = StyleSheet.create({
     width: width * 0.9,
     flexDirection: "row",
     justifyContent: "space-around",
-  },
-  nextButton: {
-    padding: width * 0.03,
-    borderRadius: (width * 0.03) / 2,
   },
 });

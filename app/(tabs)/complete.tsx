@@ -11,7 +11,7 @@ export default function CompleteScreen() {
       <ThemedText type="title" style={styles.title}>
         You have completed the Breast Cancer Navigator
       </ThemedText>
-      <Link href={{ pathname: "/", params: { reset: true } }}>
+      <Link replace href={{ pathname: "/(tabs)/", params: { reset: true } }}>
         <ThemedText type="link" style={styles.link}>
           Retake the navigator
         </ThemedText>
