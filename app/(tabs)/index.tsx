@@ -282,7 +282,7 @@ const styles = StyleSheet.create({
   },
   flatListContainer: {
     padding: width * 0.01,
-    width: width * 0.95,
+    width: width * 0.9,
   },
   questionText: {
     fontSize: width * 0.05,
@@ -297,6 +297,7 @@ const styles = StyleSheet.create({
     marginLeft: width * 0.11,
   },
   webview: {
+    alignSelf: "center",
     width: width * 0.85,
     height: height * 0.45,
     marginVertical: height * 0.01,

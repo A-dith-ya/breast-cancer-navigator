@@ -1,8 +1,7 @@
-import { router } from "expo-router";
+import { Link } from "expo-router";
 import { StyleSheet, Dimensions } from "react-native";
 import { ThemedView } from "@/components/ThemedView";
 import { ThemedText } from "@/components/ThemedText";
-import { ThemedButton } from "@/components/ThemedButton";
 
 const { width, height } = Dimensions.get("window");
 
@@ -17,11 +16,14 @@ export default function WelcomeScreen() {
         information, connecting with resources, and facilitating informed
         communication.
       </ThemedText>
-      <ThemedButton
-        text="Start Navigator"
-        type="defaultSemiBold"
-        onPress={() => router.push("/(tabs)/")}
-      />
+      <ThemedText type="section">
+        Please note: This app does not collect, store, or use any personal data.
+      </ThemedText>
+      <Link href={{ pathname: "/(info)/info" }}>
+        <ThemedText type="link" style={styles.link}>
+          Instructions
+        </ThemedText>
+      </Link>
     </ThemedView>
   );
 }
@@ -33,7 +35,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     padding: width * 0.05,
   },
-  welcomeText: {
-    marginBottom: height * 0.05,
+  link: {
+    fontSize: width * 0.065,
   },
 });

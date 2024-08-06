@@ -1,6 +1,8 @@
+import { router } from "expo-router";
 import { StyleSheet, Dimensions } from "react-native";
 import { ThemedView } from "@/components/ThemedView";
 import { ThemedText } from "@/components/ThemedText";
+import { ThemedButton } from "@/components/ThemedButton";
 
 const { width } = Dimensions.get("window");
 
@@ -8,23 +10,16 @@ export default function InfoScreen() {
   return (
     <ThemedView style={styles.container}>
       <ThemedText type="title">Instructions</ThemedText>
-      <ThemedText type="sectionTitle">Overview</ThemedText>
       <ThemedText type="section">
-        The QuestionScreen is designed for navigating through a series of
-        questions and options, with the ability to view additional resources and
-        images based on user selections.
+        "Tap the 'Info' button to proceed to the information screen. The web
+        content may take some time to load. Once loaded, you can navigate
+        through the information and click 'Learn More' for additional details."
       </ThemedText>
-      <ThemedText type="sectionTitle">Buttons</ThemedText>
-      <ThemedText type="section">
-        "Info" button to proceed to the information screen, web content will
-        take time to load.
-      </ThemedText>
-      <ThemedText type="section">
-        "Next" button to proceed to the next question.
-      </ThemedText>
-      <ThemedText type="section">
-        "Back" button to return to the previous screen.
-      </ThemedText>
+      <ThemedButton
+        text="Start Navigator"
+        type="defaultSemiBold"
+        onPress={() => router.push("/(tabs)/")}
+      />
     </ThemedView>
   );
 }
