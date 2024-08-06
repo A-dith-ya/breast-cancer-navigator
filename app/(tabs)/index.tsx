@@ -84,24 +84,26 @@ export default function QuestionScreen() {
     filter: string,
     index: number,
     customWebViewUri?: string
-  ) =>
+  ) => (
     // Render webview only after the user navigates completely through the question screen
-    questionNumber % 1 === 0.5 ? (
-      <WebView
-        ref={(ref) => (webviewRefs.current[index] = ref!)}
-        style={styles.webview}
-        source={{
-          // Use the suboption webview uri otherwise use the default webview uri
-          uri: customWebViewUri || webViewUri,
-        }}
-        // Inject the javascript to scroll to the element in the webview
-        onLoad={() =>
-          webviewRefs.current[index]?.injectJavaScript(
-            SCROLL_TO_SYMPTOM(filter)
-          )
-        }
-      />
-    ) : null;
+    <WebView
+      key={`webview_${index}`}
+      ref={(ref) => (webviewRefs.current[index] = ref!)}
+      style={[
+        // Start rendering webview after user selects an option
+        styles.webview,
+        !(questionNumber % 1 === 0.5) && styles.hideWebView,
+      ]}
+      source={{
+        // Use the suboption webview uri otherwise use the default webview uri
+        uri: customWebViewUri || webViewUri,
+      }}
+      // Inject the javascript to scroll to the element in the webview
+      onLoad={() =>
+        webviewRefs.current[index]?.injectJavaScript(SCROLL_TO_SYMPTOM(filter))
+      }
+    />
+  );
 
   const renderRadioButton = (option: string) => (
     <RadioButton
@@ -282,7 +284,7 @@ const styles = StyleSheet.create({
   },
   flatListContainer: {
     padding: width * 0.01,
-    width: width * 0.95,
+    width: width * 0.9,
   },
   questionText: {
     fontSize: width * 0.05,
@@ -297,10 +299,16 @@ const styles = StyleSheet.create({
     marginLeft: width * 0.11,
   },
   webview: {
+    alignSelf: "center",
     width: width * 0.85,
     height: height * 0.45,
     marginVertical: height * 0.01,
     marginHorizontal: width * 0.05,
+  },
+  hideWebView: {
+    position: "absolute",
+    left: -1000,
+    right: -1000,
   },
   buttonContainer: {
     width: width * 0.9,
