@@ -181,7 +181,9 @@ export default function QuestionScreen() {
           {renderRadioButton(item.option)}
           {item.subOptions &&
             item.subOptions.map((subOption) => (
-              <ThemedText style={styles.subOptionText}>{subOption}</ThemedText>
+              <ThemedText key={subOption} style={styles.subOptionText}>
+                {subOption}
+              </ThemedText>
             ))}
           {selectedOptions[Math.floor(questionNumber)]?.includes(item.option) &&
             item.filter &&
