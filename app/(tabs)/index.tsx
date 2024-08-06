@@ -8,8 +8,9 @@ import { ThemedView } from "../../components/ThemedView";
 import { ThemedText } from "../../components/ThemedText";
 import { useTheme } from "../../components/ThemedContext";
 import { client } from "../../services/sanityService";
-import { scrollToSymptom } from "../../constants/InjectedJavascript";
+import { SCROLL_TO_SYMPTOM } from "../../constants/InjectedJavascript";
 import config from "../../config";
+import { CONTENT_QUERY } from "../../constants/Queries";
 
 interface Question {
   question: string;
@@ -42,14 +43,6 @@ export default function QuestionScreen() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const CONTENT_QUERY = `*[_type == "questions"] {
-        question,
-        "images": Images[]{
-          "questionIndex": questionIndex,
-          "optionIndex": optionIndex,
-          "imageUrl": image.asset->url
-        }
-        }`;
         // Fetch questions data from Sanity
         const content = await client.fetch(CONTENT_QUERY);
         optionImages.current = content[0].images;
@@ -106,7 +99,9 @@ export default function QuestionScreen() {
           uri: customWebViewUri || webViewUri,
         }}
         onLoad={() =>
-          webviewRefs.current[index]?.injectJavaScript(scrollToSymptom(filter))
+          webviewRefs.current[index]?.injectJavaScript(
+            SCROLL_TO_SYMPTOM(filter)
+          )
         }
       />
     ) : null;
