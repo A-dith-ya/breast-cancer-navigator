@@ -39,24 +39,10 @@ export default function QuestionScreen() {
   const { colors } = useTheme();
   const local = useLocalSearchParams();
   let optionImages = useRef<Image[]>([]);
+  const flatListRef = useRef<FlatList>(null);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        // Fetch questions data from Sanity
-        const content = await client.fetch(CONTENT_QUERY);
-        optionImages.current = content[0].images;
-        setQuestionsData(JSON.parse(content[0].question).questions);
-      } catch (error) {
-        console.error(error);
-      }
-    };
-
-    fetchData();
-  }, []);
-
-  // Handle selection of options and suboptions in each question separately
   const handleSelectOption = (option: string) => {
+    // Handle selection of options and suboptions in each question separately
     const currentSelectedOptions =
       selectedOptions[Math.floor(questionNumber)] || [];
     // If the option is already selected, remove it from the selected options
@@ -75,15 +61,23 @@ export default function QuestionScreen() {
     }
   };
 
-  const renderRadioButton = (option: string) => (
-    <RadioButton
-      label={option}
-      selected={
-        selectedOptions[Math.floor(questionNumber)]?.includes(option) || false
-      }
-      onPress={() => handleSelectOption(option)}
-    />
-  );
+  // Scroll to the top when navigating between questions
+  const scrollToTop = () => {
+    flatListRef.current?.scrollToOffset({ animated: true, offset: 0 });
+  };
+
+  const renderImage = (questionIndex: number, optionIndex: number) => {
+    // Find the image for the current question and option
+    const image = optionImages.current.find(
+      (image) =>
+        image.questionIndex === questionIndex &&
+        image.optionIndex === optionIndex
+    );
+
+    return image ? (
+      <Image source={{ uri: image.imageUrl }} style={styles.webview} />
+    ) : null;
+  };
 
   const renderWebView = (
     filter: string,
@@ -96,8 +90,10 @@ export default function QuestionScreen() {
         ref={(ref) => (webviewRefs.current[index] = ref!)}
         style={styles.webview}
         source={{
+          // Use the suboption webview uri otherwise use the default webview uri
           uri: customWebViewUri || webViewUri,
         }}
+        // Inject the javascript to scroll to the element in the webview
         onLoad={() =>
           webviewRefs.current[index]?.injectJavaScript(
             SCROLL_TO_SYMPTOM(filter)
@@ -105,6 +101,16 @@ export default function QuestionScreen() {
         }
       />
     ) : null;
+
+  const renderRadioButton = (option: string) => (
+    <RadioButton
+      label={option}
+      selected={
+        selectedOptions[Math.floor(questionNumber)]?.includes(option) || false
+      }
+      onPress={() => handleSelectOption(option)}
+    />
+  );
 
   const renderSuboptionItem = ({
     item,
@@ -131,19 +137,7 @@ export default function QuestionScreen() {
     </>
   );
 
-  const renderImage = (questionIndex: number, optionIndex: number) => {
-    // Find the image for the current question and option
-    const image = optionImages.current.find(
-      (image) =>
-        image.questionIndex === questionIndex &&
-        image.optionIndex === optionIndex
-    );
-
-    return image ? (
-      <Image source={{ uri: image.imageUrl }} style={styles.webview} />
-    ) : null;
-  };
-
+  // Render suboptions if they have their own web urls otherwise render the main option as a radio button
   const renderOptionItem = ({
     item,
     index,
@@ -215,6 +209,21 @@ export default function QuestionScreen() {
     }
   }, [local]);
 
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        // Fetch questions data from Sanity
+        const content = await client.fetch(CONTENT_QUERY);
+        optionImages.current = content[0].images;
+        setQuestionsData(JSON.parse(content[0].question).questions);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
   return (
     <GestureHandlerRootView>
       <ThemedView style={styles.container}>
@@ -226,6 +235,7 @@ export default function QuestionScreen() {
               {questionsData[Math.floor(questionNumber)].question}
             </ThemedText>
             <FlatList
+              ref={flatListRef}
               data={questionsData[Math.floor(questionNumber)].options}
               renderItem={({ item, index }) =>
                 renderOptionItem({ item, index })
@@ -242,6 +252,7 @@ export default function QuestionScreen() {
                 onPress={() => {
                   if (questionNumber < questionsData.length - 0.5) {
                     setQuestionNumber(questionNumber + 0.5);
+                    scrollToTop();
                   } else {
                     router.push("complete");
                   }
@@ -257,6 +268,7 @@ export default function QuestionScreen() {
                 onPress={() => {
                   if (questionNumber > 0) {
                     setQuestionNumber(questionNumber - 0.5);
+                    scrollToTop();
                   }
                 }}
               >
