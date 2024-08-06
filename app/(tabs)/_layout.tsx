@@ -1,6 +1,6 @@
 import { Tabs } from "expo-router";
-import { ThemeProvider, useTheme } from "../../components/ThemedContext";
-import { TabBarIcon } from '@/components/navigation/TabBarIcon';
+import { ThemeProvider, useTheme } from "@/components/ThemedContext";
+import { TabBarIcon } from "@/components/navigation/TabBarIcon";
 
 export default function TabLayout() {
   const { colors } = useTheme();
@@ -15,7 +15,7 @@ export default function TabLayout() {
           headerTintColor: colors.text,
           headerTitleStyle: {
             fontSize: 16,
-          }
+          },
         }}
       >
         <Tabs.Screen
@@ -24,7 +24,12 @@ export default function TabLayout() {
             title: "Breast Cancer Navigator",
             tabBarStyle: { display: "none" },
             tabBarIcon: ({ color, focused }) => (
-              <TabBarIcon name={focused ? 'arrow-back-circle' : 'arrow-back-circle-outline'} color={color} />
+              <TabBarIcon
+                name={
+                  focused ? "arrow-back-circle" : "arrow-back-circle-outline"
+                }
+                color={color}
+              />
             ),
           }}
         />
@@ -33,7 +38,14 @@ export default function TabLayout() {
           options={{
             title: "Navigator Completion",
             tabBarIcon: ({ color, focused }) => (
-              <TabBarIcon name={focused ? 'checkmark-done-circle' : 'checkmark-done-circle-outline'} color={color} />
+              <TabBarIcon
+                name={
+                  focused
+                    ? "checkmark-done-circle"
+                    : "checkmark-done-circle-outline"
+                }
+                color={color}
+              />
             ),
           }}
         />

@@ -8,14 +8,14 @@ import React, { useState, useEffect, useRef } from "react";
 import { FlatList, GestureHandlerRootView } from "react-native-gesture-handler";
 import { WebView } from "react-native-webview";
 import { useLocalSearchParams, router } from "expo-router";
-import { RadioButton } from "../../components/RadioButton";
-import { ThemedView } from "../../components/ThemedView";
-import { ThemedText } from "../../components/ThemedText";
-import { useTheme } from "../../components/ThemedContext";
-import { client } from "../../services/sanityService";
-import { SCROLL_TO_SYMPTOM } from "../../constants/InjectedJavascript";
-import config from "../../config";
-import { CONTENT_QUERY } from "../../constants/Queries";
+import { RadioButton } from "@/components/RadioButton";
+import { ThemedView } from "@/components/ThemedView";
+import { ThemedText } from "@/components/ThemedText";
+import { useTheme } from "@/components/ThemedContext";
+import { client } from "@/services/sanityService";
+import { SCROLL_TO_SYMPTOM } from "@/constants/InjectedJavascript";
+import config from "@/config";
+import { CONTENT_QUERY } from "@/constants/Queries";
 
 interface Question {
   question: string;
