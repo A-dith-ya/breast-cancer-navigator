@@ -29,7 +29,11 @@ export function ThemedButton({
 }: ThemedButtonProps) {
   const backgroundColor = useThemeColor(
     { light: lightColor, dark: darkColor },
-    "tabIconDefault"
+    "button"
+  );
+  const buttonTextColor = useThemeColor(
+    { light: lightColor, dark: darkColor },
+    "buttonText"
   );
 
   return (
@@ -38,7 +42,9 @@ export function ThemedButton({
       onPress={onPress}
       {...rest}
     >
-      <ThemedText type={type}>{text}</ThemedText>
+      <ThemedText type={type} style={{ color: buttonTextColor }}>
+        {text}
+      </ThemedText>
     </TouchableOpacity>
   );
 }

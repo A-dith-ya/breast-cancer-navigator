@@ -9,7 +9,7 @@ export default function InfoLayout() {
     <ThemeProvider>
       <Tabs
         screenOptions={{
-          tabBarStyle: { backgroundColor: colors.background },
+          tabBarStyle: { backgroundColor: colors.tabBackground },
           headerShown: false,
         }}
       >

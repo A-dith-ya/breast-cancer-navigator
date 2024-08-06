@@ -1,6 +1,9 @@
 import { Tabs } from "expo-router";
+import { Dimensions } from "react-native";
 import { ThemeProvider, useTheme } from "@/components/ThemedContext";
 import { TabBarIcon } from "@/components/navigation/TabBarIcon";
+
+const { width } = Dimensions.get("window");
 
 export default function TabLayout() {
   const { colors } = useTheme();
@@ -10,11 +13,11 @@ export default function TabLayout() {
       <Tabs
         screenOptions={{
           headerStyle: {
-            backgroundColor: colors.background,
+            backgroundColor: colors.headerBackground,
           },
           headerTintColor: colors.text,
           headerTitleStyle: {
-            fontSize: 16,
+            fontSize: width * 0.045,
           },
         }}
       >
@@ -37,7 +40,7 @@ export default function TabLayout() {
           name="complete"
           options={{
             title: "Navigator Completion",
-            tabBarStyle: { backgroundColor: colors.background },
+            tabBarStyle: { backgroundColor: colors.tabBackground },
             tabBarIcon: ({ color, focused }) => (
               <TabBarIcon
                 name={

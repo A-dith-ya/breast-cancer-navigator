@@ -57,7 +57,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: width * 0.08,
     fontWeight: "bold",
-    lineHeight: height * 0.04,
+    lineHeight: height * 0.05,
     marginBottom: height * 0.05,
   },
   sectionTitle: {

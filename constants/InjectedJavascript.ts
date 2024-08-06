@@ -24,7 +24,6 @@ const SCROLL_TO_CONTACT = `
   let element = document.querySelector('h3');
   if (element) {
     element.scrollIntoView();
-  }
-`;
+  }`;
 
 export { SCROLL_TO_SYMPTOM, SCROLL_TO_CONTACT };
