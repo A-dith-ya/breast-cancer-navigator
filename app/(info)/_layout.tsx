@@ -2,48 +2,37 @@ import { Tabs } from "expo-router";
 import { ThemeProvider, useTheme } from "@/components/ThemedContext";
 import { TabBarIcon } from "@/components/navigation/TabBarIcon";
 
-export default function TabLayout() {
+export default function InfoLayout() {
   const { colors } = useTheme();
 
   return (
     <ThemeProvider>
       <Tabs
         screenOptions={{
-          headerStyle: {
-            backgroundColor: colors.background,
-          },
-          headerTintColor: colors.text,
-          headerTitleStyle: {
-            fontSize: 16,
-          },
+          tabBarStyle: { backgroundColor: colors.background },
+          headerShown: false,
         }}
       >
         <Tabs.Screen
           name="index"
           options={{
-            title: "Breast Cancer Navigator",
-            tabBarStyle: { display: "none" },
+            title: "Welcome",
             tabBarIcon: ({ color, focused }) => (
               <TabBarIcon
-                name={
-                  focused ? "arrow-back-circle" : "arrow-back-circle-outline"
-                }
+                name={focused ? "home" : "home-outline"}
                 color={color}
               />
             ),
           }}
         />
         <Tabs.Screen
-          name="complete"
+          name="info"
           options={{
-            title: "Navigator Completion",
-            tabBarStyle: { backgroundColor: colors.background },
+            title: "Instructions",
             tabBarIcon: ({ color, focused }) => (
               <TabBarIcon
                 name={
-                  focused
-                    ? "checkmark-done-circle"
-                    : "checkmark-done-circle-outline"
+                  focused ? "information-circle" : "information-circle-outline"
                 }
                 color={color}
               />

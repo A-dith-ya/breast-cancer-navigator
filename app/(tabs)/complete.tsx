@@ -1,16 +1,20 @@
 import { Link } from "expo-router";
-import { StyleSheet } from "react-native";
+import { StyleSheet, Dimensions } from "react-native";
 import { ThemedView } from "@/components/ThemedView";
 import { ThemedText } from "@/components/ThemedText";
+
+const { width, height } = Dimensions.get("window");
 
 export default function CompleteScreen() {
   return (
     <ThemedView style={styles.container}>
       <ThemedText type="title">
-        Thank you for completing the breast cancer navigator.
+        You have completed the Breast Cancer Navigator
       </ThemedText>
-      <Link href={{pathname:"/", params: { reset: true}}} >
-        <ThemedText type="link" style={styles.link}>Retake the navigator!</ThemedText>
+      <Link replace href={{ pathname: "/(tabs)/", params: { reset: true } }}>
+        <ThemedText type="link" style={styles.link}>
+          Retake the navigator
+        </ThemedText>
       </Link>
     </ThemedView>
   );
@@ -19,11 +23,11 @@ export default function CompleteScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 16,
     alignItems: "center",
+    padding: width * 0.05,
   },
+
   link: {
-    marginTop: 15,
-    fontSize: 20,
+    fontSize: width * 0.065,
   },
 });

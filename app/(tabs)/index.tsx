@@ -1,15 +1,18 @@
-import { TouchableOpacity, StyleSheet } from "react-native";
+import { Image, ActivityIndicator, StyleSheet, Dimensions } from "react-native";
 import React, { useState, useEffect, useRef } from "react";
 import { FlatList, GestureHandlerRootView } from "react-native-gesture-handler";
 import { WebView } from "react-native-webview";
 import { useLocalSearchParams, router } from "expo-router";
-import { RadioButton } from "../../components/RadioButton";
-import { ThemedView } from "../../components/ThemedView";
-import { ThemedText } from "../../components/ThemedText";
-import { useTheme } from "../../components/ThemedContext";
-import { client } from "../../services/sanityService";
-import { scrollToSymptom } from "../../constants/InjectedJavascript";
-import config from "../../config";
+import { RadioButton } from "@/components/RadioButton";
+import { ThemedView } from "@/components/ThemedView";
+import { ThemedText } from "@/components/ThemedText";
+import { ThemedButton } from "@/components/ThemedButton";
+import { client } from "@/services/sanityService";
+import { SCROLL_TO_SYMPTOM } from "@/constants/InjectedJavascript";
+import config from "@/config";
+import { CONTENT_QUERY } from "@/constants/Queries";
+
+const { width, height } = Dimensions.get("window");
 
 interface Question {
   question: string;
@@ -21,6 +24,12 @@ interface Question {
   }[];
 }
 
+interface Image {
+  questionIndex: number;
+  optionIndex: number;
+  imageUrl: string;
+}
+
 export default function QuestionScreen() {
   const [questionsData, setQuestionsData] = useState<Question[]>([]);
   const [questionNumber, setQuestionNumber] = useState(0);
@@ -29,26 +38,12 @@ export default function QuestionScreen() {
   }>({});
   const webviewRefs = useRef<WebView[]>([]);
   const [webViewUri, setWebViewUri] = useState("");
-  const { colors } = useTheme();
   const local = useLocalSearchParams();
+  let optionImages = useRef<Image[]>([]);
+  const flatListRef = useRef<FlatList>(null);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const CONTENT_QUERY = `*[_type == "questions"]`;
-        // Fetch questions data from Sanity
-        const content = await client.fetch(CONTENT_QUERY);
-        setQuestionsData(JSON.parse(content[0].question).questions);
-      } catch (error) {
-        console.error(error);
-      }
-    };
-
-    fetchData();
-  }, []);
-
-  // Handle selection of options and suboptions in each question separately
   const handleSelectOption = (option: string) => {
+    // Handle selection of options and suboptions in each question separately
     const currentSelectedOptions =
       selectedOptions[Math.floor(questionNumber)] || [];
     // If the option is already selected, remove it from the selected options
@@ -67,15 +62,23 @@ export default function QuestionScreen() {
     }
   };
 
-  const renderRadioButton = (option: string) => (
-    <RadioButton
-      label={option}
-      selected={
-        selectedOptions[Math.floor(questionNumber)]?.includes(option) || false
-      }
-      onPress={() => handleSelectOption(option)}
-    />
-  );
+  // Scroll to the top when navigating between questions
+  const scrollToTop = () => {
+    flatListRef.current?.scrollToOffset({ animated: true, offset: 0 });
+  };
+
+  const renderImage = (questionIndex: number, optionIndex: number) => {
+    // Find the image for the current question and option
+    const image = optionImages.current.find(
+      (image) =>
+        image.questionIndex === questionIndex &&
+        image.optionIndex === optionIndex
+    );
+
+    return image ? (
+      <Image source={{ uri: image.imageUrl }} style={styles.webview} />
+    ) : null;
+  };
 
   const renderWebView = (
     filter: string,
@@ -88,13 +91,27 @@ export default function QuestionScreen() {
         ref={(ref) => (webviewRefs.current[index] = ref!)}
         style={styles.webview}
         source={{
+          // Use the suboption webview uri otherwise use the default webview uri
           uri: customWebViewUri || webViewUri,
         }}
+        // Inject the javascript to scroll to the element in the webview
         onLoad={() =>
-          webviewRefs.current[index]?.injectJavaScript(scrollToSymptom(filter))
+          webviewRefs.current[index]?.injectJavaScript(
+            SCROLL_TO_SYMPTOM(filter)
+          )
         }
       />
     ) : null;
+
+  const renderRadioButton = (option: string) => (
+    <RadioButton
+      label={option}
+      selected={
+        selectedOptions[Math.floor(questionNumber)]?.includes(option) || false
+      }
+      onPress={() => handleSelectOption(option)}
+    />
+  );
 
   const renderSuboptionItem = ({
     item,
@@ -109,10 +126,10 @@ export default function QuestionScreen() {
       {typeof item === "object" ? (
         <>
           {renderRadioButton(item.subOption)}
-          {selectedOptions[Math.floor(questionNumber)]?.includes(
-            item.subOption
-          ) &&
-            item.filter &&
+          {item.filter &&
+            selectedOptions[Math.floor(questionNumber)]?.includes(
+              item.subOption
+            ) &&
             renderWebView(item.filter, index, customWebViewUri)}
         </>
       ) : (
@@ -121,6 +138,7 @@ export default function QuestionScreen() {
     </>
   );
 
+  // Render suboptions if they have their own web urls otherwise render the main option as a radio button
   const renderOptionItem = ({
     item,
     index,
@@ -153,13 +171,19 @@ export default function QuestionScreen() {
           {renderRadioButton(item.option)}
           {item.subOptions &&
             item.subOptions.map((subOption) => (
-              <ThemedText style={styles.subOptionText}>{subOption}</ThemedText>
+              <ThemedText key={subOption} style={styles.subOptionText}>
+                {subOption}
+              </ThemedText>
             ))}
-          {selectedOptions[Math.floor(questionNumber)]?.includes(item.option) &&
-            item.filter &&
+          {item.filter &&
+            selectedOptions[Math.floor(questionNumber)]?.includes(
+              item.option
+            ) &&
             renderWebView(item.filter, index)}
         </>
       )}
+      {questionNumber % 1 === 0 &&
+        renderImage(Math.floor(questionNumber), index)}
     </>
   );
 
@@ -182,21 +206,37 @@ export default function QuestionScreen() {
       // Reset the screen state when the user retakes the assessment
       setQuestionNumber(0);
       setSelectedOptions({});
-      router.push("/", { reset: false });
+      router.replace("/(tabs)/", { reset: false });
     }
   }, [local]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        // Fetch questions data from Sanity
+        const content = await client.fetch(CONTENT_QUERY);
+        optionImages.current = content[0].images;
+        setQuestionsData(JSON.parse(content[0].question).questions);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   return (
     <GestureHandlerRootView>
       <ThemedView style={styles.container}>
         {questionsData.length === 0 ? (
-          <ThemedText>Loading...</ThemedText>
+          <ActivityIndicator size="large" />
         ) : (
           <>
             <ThemedText style={styles.questionText}>
               {questionsData[Math.floor(questionNumber)].question}
             </ThemedText>
             <FlatList
+              ref={flatListRef}
               data={questionsData[Math.floor(questionNumber)].options}
               renderItem={({ item, index }) =>
                 renderOptionItem({ item, index })
@@ -205,34 +245,26 @@ export default function QuestionScreen() {
               style={styles.flatListContainer}
             />
             <ThemedView style={styles.buttonContainer}>
-              <TouchableOpacity
-                style={[
-                  styles.nextButton,
-                  { backgroundColor: colors.tabIconDefault },
-                ]}
+              <ThemedButton
+                text={questionNumber % 1 === 0.5 ? "Next" : "Info"}
                 onPress={() => {
                   if (questionNumber < questionsData.length - 0.5) {
                     setQuestionNumber(questionNumber + 0.5);
+                    scrollToTop();
                   } else {
                     router.push("complete");
                   }
                 }}
-              >
-                <ThemedText>Next</ThemedText>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={[
-                  styles.nextButton,
-                  { backgroundColor: colors.tabIconDefault },
-                ]}
+              />
+              <ThemedButton
+                text="Back"
                 onPress={() => {
                   if (questionNumber > 0) {
                     setQuestionNumber(questionNumber - 0.5);
+                    scrollToTop();
                   }
                 }}
-              >
-                <ThemedText>Back</ThemedText>
-              </TouchableOpacity>
+              />
             </ThemedView>
           </>
         )}
@@ -244,36 +276,35 @@ export default function QuestionScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 16,
     alignItems: "center",
+    justifyContent: "center",
+    padding: width * 0.01,
   },
   flatListContainer: {
-    width: 320,
+    padding: width * 0.01,
+    width: width * 0.95,
   },
   questionText: {
-    fontSize: 20,
+    fontSize: width * 0.05,
+    width: width * 0.9,
   },
   optionText: {
-    fontSize: 16,
-    marginVertical: 8,
+    fontSize: width * 0.046,
+    marginLeft: width * 0.032,
   },
   subOptionText: {
-    fontSize: 14,
-    paddingLeft: 16,
-    marginBottom: 8,
+    fontSize: width * 0.042,
+    marginLeft: width * 0.11,
   },
   webview: {
-    width: 300,
-    height: 300,
-    marginBottom: 16,
+    width: width * 0.85,
+    height: height * 0.45,
+    marginVertical: height * 0.01,
+    marginHorizontal: width * 0.05,
   },
   buttonContainer: {
-    width: 320,
+    width: width * 0.9,
     flexDirection: "row",
     justifyContent: "space-around",
-  },
-  nextButton: {
-    padding: 8,
-    borderRadius: 4,
   },
 });
