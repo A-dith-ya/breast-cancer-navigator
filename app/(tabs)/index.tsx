@@ -124,10 +124,10 @@ export default function QuestionScreen() {
       {typeof item === "object" ? (
         <>
           {renderRadioButton(item.subOption)}
-          {selectedOptions[Math.floor(questionNumber)]?.includes(
-            item.subOption
-          ) &&
-            item.filter &&
+          {item.filter &&
+            selectedOptions[Math.floor(questionNumber)]?.includes(
+              item.subOption
+            ) &&
             renderWebView(item.filter, index, customWebViewUri)}
         </>
       ) : (
@@ -185,8 +185,10 @@ export default function QuestionScreen() {
                 {subOption}
               </ThemedText>
             ))}
-          {selectedOptions[Math.floor(questionNumber)]?.includes(item.option) &&
-            item.filter &&
+          {item.filter &&
+            selectedOptions[Math.floor(questionNumber)]?.includes(
+              item.option
+            ) &&
             renderWebView(item.filter, index)}
         </>
       )}
