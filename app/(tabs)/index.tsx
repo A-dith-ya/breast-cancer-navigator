@@ -1,4 +1,9 @@
-import { TouchableOpacity, Image, StyleSheet } from "react-native";
+import {
+  TouchableOpacity,
+  Image,
+  ActivityIndicator,
+  StyleSheet,
+} from "react-native";
 import React, { useState, useEffect, useRef } from "react";
 import { FlatList, GestureHandlerRootView } from "react-native-gesture-handler";
 import { WebView } from "react-native-webview";
@@ -228,7 +233,7 @@ export default function QuestionScreen() {
     <GestureHandlerRootView>
       <ThemedView style={styles.container}>
         {questionsData.length === 0 ? (
-          <ThemedText>Loading...</ThemedText>
+          <ActivityIndicator size="large" />
         ) : (
           <>
             <ThemedText style={styles.questionText}>
