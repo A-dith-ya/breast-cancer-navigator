@@ -245,6 +245,11 @@ export default function QuestionScreen() {
               }
               keyExtractor={(item) => item.option}
               style={styles.flatListContainer}
+              ListFooterComponent={
+                <ThemedText>
+                  {questionNumber % 1 === 0.5 && webViewUri}
+                </ThemedText>
+              }
             />
             <ThemedView style={styles.buttonContainer}>
               <ThemedButton
