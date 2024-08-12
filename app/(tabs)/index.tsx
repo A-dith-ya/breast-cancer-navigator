@@ -1,4 +1,10 @@
-import { Image, ActivityIndicator, StyleSheet, Dimensions } from "react-native";
+import {
+  Image,
+  ActivityIndicator,
+  StyleSheet,
+  Dimensions,
+  Linking,
+} from "react-native";
 import React, { useState, useEffect, useRef } from "react";
 import { FlatList, GestureHandlerRootView } from "react-native-gesture-handler";
 import { WebView } from "react-native-webview";
@@ -38,6 +44,9 @@ export default function QuestionScreen() {
   }>({});
   const webviewRefs = useRef<WebView[]>([]);
   const [webViewUri, setWebViewUri] = useState("");
+  const [webViewSources, setWebViewSources] = useState<{
+    [key: number]: string[];
+  }>({});
   const local = useLocalSearchParams();
   let optionImages = useRef<Image[]>([]);
   const flatListRef = useRef<FlatList>(null);
@@ -58,6 +67,24 @@ export default function QuestionScreen() {
       setSelectedOptions({
         ...selectedOptions,
         [Math.floor(questionNumber)]: [...currentSelectedOptions, option],
+      });
+    }
+  };
+
+  const handleSelectSource = (source: string) => {
+    const currentSources = webViewSources[Math.floor(questionNumber)] || [];
+
+    const sourceDomain = new URL(source).hostname;
+    // Check if there is already a source from the same domain
+    const domainExists = currentSources.some(
+      (existingSource) => new URL(existingSource).hostname === sourceDomain
+    );
+
+    // Add the source to the webview sources if it is not already added
+    if (!currentSources.includes(source) && !domainExists) {
+      setWebViewSources({
+        ...webViewSources,
+        [Math.floor(questionNumber)]: [...currentSources, source],
       });
     }
   };
@@ -102,6 +129,8 @@ export default function QuestionScreen() {
       onLoad={() =>
         webviewRefs.current[index]?.injectJavaScript(SCROLL_TO_SYMPTOM(filter))
       }
+      // Listen for the webview navigation to update the webview sources
+      onNavigationStateChange={(navState) => handleSelectSource(navState.url)}
     />
   );
 
@@ -208,6 +237,7 @@ export default function QuestionScreen() {
       // Reset the screen state when the user retakes the assessment
       setQuestionNumber(0);
       setSelectedOptions({});
+      setWebViewSources({});
       router.replace("/(tabs)/", { reset: false });
     }
   }, [local]);
@@ -246,9 +276,29 @@ export default function QuestionScreen() {
               keyExtractor={(item) => item.option}
               style={styles.flatListContainer}
               ListFooterComponent={
-                <ThemedText>
-                  {questionNumber % 1 === 0.5 && webViewUri}
-                </ThemedText>
+                <>
+                  {questionNumber % 1 === 0.5 && (
+                    <>
+                      <ThemedText style={{ marginTop: height * 0.05 }}>
+                        Sources:
+                      </ThemedText>
+                      {
+                        // Open the webview source in the browser when the user navigates to the source
+                        webViewSources[Math.floor(questionNumber)]?.map(
+                          (source) => (
+                            <ThemedText
+                              type="link"
+                              key={source}
+                              onPress={() => Linking.openURL(source)}
+                            >
+                              {source}
+                            </ThemedText>
+                          )
+                        )
+                      }
+                    </>
+                  )}
+                </>
               }
             />
             <ThemedView style={styles.buttonContainer}>
