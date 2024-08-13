@@ -47,28 +47,23 @@ export function ThemedText({
 const styles = StyleSheet.create({
   default: {
     fontSize: width * 0.04,
-    lineHeight: height * 0.03,
   },
   defaultSemiBold: {
     fontSize: width * 0.04,
-    lineHeight: height * 0.03,
     fontWeight: "600",
   },
   title: {
     fontSize: width * 0.08,
     fontWeight: "bold",
-    lineHeight: height * 0.05,
     marginBottom: height * 0.05,
   },
   sectionTitle: {
     fontSize: width * 0.06,
     fontWeight: "bold",
-    lineHeight: height * 0.035,
     marginBottom: height * 0.025,
   },
   section: {
     fontSize: width * 0.05,
-    lineHeight: height * 0.03,
     marginBottom: height * 0.025,
     width: width * 0.9,
   },
@@ -77,7 +72,6 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   link: {
-    lineHeight: height * 0.0375,
     fontSize: width * 0.04,
     color: "#0a7ea4",
   },

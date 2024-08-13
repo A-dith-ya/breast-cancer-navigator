@@ -1,8 +1,14 @@
-# Welcome to your Expo app 👋
+# Breast Cancer Navigator
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+Breast Cancer Navigator is a comprehensive, user-friendly app designed to support breast cancer patients and survivors in Canada throughout their cancer care journey. Developed by the Cancer Care Innovation Lab, this app serves as your personal guide to navigating the complex world of cancer treatment and care.
 
-## Get started
+## Features
+
+- Symptom & Outcome Tracker: Monitor symptoms, track treatment outcomes and milestones.
+- Resource Hub: Access expert information on managing symptom distress, browse educational content on cancer care, stay updated with the latest cancer care innovations.
+- Privacy-Focused: No personal data is collected, stored, or used by the app. Ensure your information remains private and secure.
+
+## Installation
 
 1. Install dependencies
 
@@ -16,35 +22,9 @@ This is an [Expo](https://expo.dev) project created with [`create-expo-app`](htt
     npx expo start
    ```
 
-In the output, you'll find options to open the app in a
+## Environment Variables
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+1. **Sanity Configuration**
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
-
-```bash
-npm run reset-project
-```
-
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
-
-## Learn more
-
-To learn more about developing your project with Expo, look at the following resources:
-
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+   - **`SANITY_TOKEN`**: Token used to authenticate requests to the Sanity API.
+   - **`QUESTIONS_ENTRY_ID`**: Entry ID for the questions dataset within Contentful.
