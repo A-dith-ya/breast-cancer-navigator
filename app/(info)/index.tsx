@@ -10,6 +10,15 @@ export default function WelcomeScreen() {
     <ThemedView style={styles.container}>
       <ThemedText type="title">Welcome to Navigator</ThemedText>
       <ThemedText type="section">
+        AI-powered personalized recommendations for meal plans, exercise
+        routines, and well-being.
+      </ThemedText>
+      <Link href={{ pathname: "/(plan)" }}>
+        <ThemedText type="link" style={styles.link}>
+          Recommendation Dashboard
+        </ThemedText>
+      </Link>
+      <ThemedText type="section">
         This is a simple, user-friendly digital application for navigation and
         tracking outcomes to improve your personal experience. This decision
         support tool can enhance your experience by empowering you with basic
