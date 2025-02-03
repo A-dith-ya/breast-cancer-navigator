@@ -9,7 +9,7 @@ const { width } = Dimensions.get("window");
 export default function TabLayout() {
   const { colors } = useTheme();
   const router = useRouter();
-  const planData = 1;
+  const planData = null;
 
   useEffect(() => {
     if (planData === null) {
@@ -44,6 +44,45 @@ export default function TabLayout() {
             title: "Settings",
             tabBarStyle: { display: "none" },
             href: null,
+          }}
+        />
+        <Tabs.Screen
+          name="meal-plan"
+          options={{
+            title: "Meal Plan",
+            tabBarStyle: { backgroundColor: colors.tabBackground },
+            tabBarIcon: ({ color, focused }) => (
+              <TabBarIcon
+                name={focused ? "nutrition" : "nutrition-outline"}
+                color={color}
+              />
+            ),
+          }}
+        />
+        <Tabs.Screen
+          name="fitness-plan"
+          options={{
+            title: "Fitness Plan",
+            tabBarStyle: { backgroundColor: colors.tabBackground },
+            tabBarIcon: ({ color, focused }) => (
+              <TabBarIcon
+                name={focused ? "fitness" : "fitness-outline"}
+                color={color}
+              />
+            ),
+          }}
+        />
+        <Tabs.Screen
+          name="wellbeing-plan"
+          options={{
+            title: "Wellbeing Plan",
+            tabBarStyle: { backgroundColor: colors.tabBackground },
+            tabBarIcon: ({ color, focused }) => (
+              <TabBarIcon
+                name={focused ? "happy" : "happy-outline"}
+                color={color}
+              />
+            ),
           }}
         />
       </Tabs>
