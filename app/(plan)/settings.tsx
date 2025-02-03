@@ -92,6 +92,7 @@ const styles = StyleSheet.create({
   input: {
     width: width * 0.6,
     padding: width * 0.03,
+    fontSize: width * 0.04,
     borderWidth: 1,
   },
 });
