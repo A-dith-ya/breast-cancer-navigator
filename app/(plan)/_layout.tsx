@@ -13,20 +13,19 @@ const { width } = Dimensions.get("window");
 export default function TabLayout() {
   const { colors } = useTheme();
   const router = useRouter();
-  let planData: any = null;
 
   useEffect(() => {
     const getPlanData = async () => {
-      planData = await AsyncStorage.getItem(config.RECOMMENDATION_KEY);
+      const storedData = await AsyncStorage.getItem(config.RECOMMENDATION_KEY);
+
+      if (!storedData) {
+        logger.log("No plan data found, redirecting to settings");
+        router.replace("/(plan)/settings");
+      }
     };
 
     getPlanData();
-
-    if (!planData) {
-      logger.log("No plan data found, redirecting to settings");
-      router.replace("/(plan)/settings");
-    }
-  }, [planData, router]);
+  }, [router]);
 
   return (
     <ThemeProvider>

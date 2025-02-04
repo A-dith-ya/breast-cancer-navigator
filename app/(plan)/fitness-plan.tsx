@@ -1,31 +1,60 @@
 import { ScrollView, FlatList, StyleSheet, Dimensions } from "react-native";
-import React from "react";
+import React, { useEffect, useState } from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { ThemedView } from "@/components/ThemedView";
 import { ThemedText } from "@/components/ThemedText";
-import { exercisePlanData } from "@/data/exercisePlanData";
+import config from "@/config";
 
 const { width, height } = Dimensions.get("window");
 
+interface ExercisePlan {
+  MobilityLevel: string;
+  Focus: string;
+  Routine: {
+    [key: string]: string[];
+  };
+  Tips: string[];
+}
+
 export default function FitnessPlanScreen() {
-  const { MobilityLevel, Focus, Routine, Tips } = exercisePlanData.ExercisePlan;
+  const [mobilityLevel, setMobilityLevel] = useState("");
+  const [focus, setFocus] = useState("");
+  const [routine, setRoutine] = useState<ExercisePlan["Routine"]>({});
+  const [tips, setTips] = useState<ExercisePlan["Tips"]>([]);
+
+  useEffect(() => {
+    const getPlanData = async () => {
+      const storedData = await AsyncStorage.getItem(config.RECOMMENDATION_KEY);
+
+      if (storedData) {
+        const planData: ExercisePlan = JSON.parse(storedData).ExercisePlan;
+        setMobilityLevel(planData.MobilityLevel);
+        setFocus(planData.Focus);
+        setRoutine(planData.Routine);
+        setTips(planData.Tips);
+      }
+    };
+
+    getPlanData();
+  }, []);
 
   return (
     <ThemedView style={styles.container}>
       <ThemedText type="sectionTitle" style={styles.header}>
-        Mobility Level: {MobilityLevel}
+        Mobility Level: {mobilityLevel}
       </ThemedText>
       <ThemedText type="section" style={styles.description}>
-        {Focus}
+        {focus}
       </ThemedText>
 
       <ScrollView>
-        {Object.keys(Routine).map((category, index) => (
+        {Object.keys(routine).map((category, index) => (
           <ThemedView key={index} style={styles.section}>
             <ThemedText type="sectionTitle" style={styles.sectionTitle}>
               {category}
             </ThemedText>
             <FlatList
-              data={Routine[category]}
+              data={routine[category]}
               keyExtractor={(item, idx) => idx.toString()}
               renderItem={({ item }) => (
                 <ThemedText
@@ -41,7 +70,7 @@ export default function FitnessPlanScreen() {
             Tips
           </ThemedText>
           <FlatList
-            data={Tips}
+            data={tips}
             keyExtractor={(item, idx) => idx.toString()}
             renderItem={({ item }) => (
               <ThemedText

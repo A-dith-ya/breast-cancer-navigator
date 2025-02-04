@@ -1,13 +1,27 @@
 import { ScrollView, FlatList, StyleSheet, Dimensions } from "react-native";
-import React from "react";
+import React, { useEffect, useState } from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { ThemedView } from "@/components/ThemedView";
 import { ThemedText } from "@/components/ThemedText";
-import { mentalWellbeingData } from "@/data/wellBeingData";
+import config from "@/config";
 
 const { width, height } = Dimensions.get("window");
 
 export default function MentalWellbeingScreen() {
-  const wellbeing = mentalWellbeingData.MentalWellBeingSupport;
+  const [wellbeing, setWellbeing] = useState({});
+
+  useEffect(() => {
+    const getWellbeingData = async () => {
+      const storedData = await AsyncStorage.getItem(config.RECOMMENDATION_KEY);
+
+      if (storedData) {
+        const planData = JSON.parse(storedData).MentalWellBeingSupport;
+        setWellbeing(planData);
+      }
+    };
+
+    getWellbeingData();
+  }, []);
 
   return (
     <ThemedView style={styles.container}>

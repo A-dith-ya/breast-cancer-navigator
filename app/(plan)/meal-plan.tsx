@@ -1,13 +1,39 @@
 import { ScrollView, FlatList, StyleSheet, Dimensions } from "react-native";
-import React from "react";
+import React, { useEffect, useState } from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { ThemedView } from "@/components/ThemedView";
 import { ThemedText } from "@/components/ThemedText";
-import { mealPlanData } from "@/data/mealPlanData";
+import config from "@/config";
 
 const { width, height } = Dimensions.get("window");
 
+interface MealPlan {
+  DietType: string;
+  NutritionalFocus: string;
+  Meals: {
+    [key: string]: string[];
+  };
+}
+
 export default function MealPlanScreen() {
-  const { DietType, NutritionalFocus, Meals } = mealPlanData.MealPlan;
+  const [DietType, setDietType] = useState("");
+  const [NutritionalFocus, setNutritionalFocus] = useState("");
+  const [Meals, setMeals] = useState<MealPlan["Meals"]>({});
+
+  useEffect(() => {
+    const getPlanData = async () => {
+      const storedData = await AsyncStorage.getItem(config.RECOMMENDATION_KEY);
+
+      if (storedData) {
+        const planData: MealPlan = JSON.parse(storedData).MealPlan;
+        setDietType(planData.DietType);
+        setNutritionalFocus(planData.NutritionalFocus);
+        setMeals(planData.Meals);
+      }
+    };
+
+    getPlanData();
+  }, []);
 
   return (
     <ThemedView style={styles.container}>
