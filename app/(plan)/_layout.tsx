@@ -4,15 +4,26 @@ import { useEffect } from "react";
 import { ThemeProvider, useTheme } from "@/components/ThemedContext";
 import { TabBarIcon } from "@/components/navigation/TabBarIcon";
 
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import config from "@/config";
+import logger from "@/utils/logger";
+
 const { width } = Dimensions.get("window");
 
 export default function TabLayout() {
   const { colors } = useTheme();
   const router = useRouter();
-  const planData = null;
+  let planData: any = null;
 
   useEffect(() => {
-    if (planData === null) {
+    const getPlanData = async () => {
+      planData = await AsyncStorage.getItem(config.RECOMMENDATION_KEY);
+    };
+
+    getPlanData();
+
+    if (!planData) {
+      logger.log("No plan data found, redirecting to settings");
       router.replace("/(plan)/settings");
     }
   }, [planData, router]);

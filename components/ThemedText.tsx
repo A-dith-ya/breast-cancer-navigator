@@ -15,7 +15,8 @@ export type ThemedTextProps = TextProps & {
     | "link"
     | "sectionTitle"
     | "section"
-    | "buttonTitle";
+    | "buttonTitle"
+    | "error";
 };
 
 export function ThemedText({
@@ -39,6 +40,7 @@ export function ThemedText({
         type === "subtitle" ? styles.subtitle : undefined,
         type === "link" ? styles.link : undefined,
         type === "buttonTitle" ? styles.buttonTitle : undefined,
+        type === "error" ? styles.error : undefined,
         style,
       ]}
       {...rest}
@@ -80,5 +82,9 @@ const styles = StyleSheet.create({
   buttonTitle: {
     fontSize: width * 0.06,
     fontWeight: 500,
+  },
+  error: {
+    color: "red",
+    fontSize: width * 0.03,
   },
 });
