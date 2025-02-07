@@ -1,15 +1,10 @@
-import {
-  View,
-  TextInput,
-  StyleSheet,
-  Dimensions,
-  ActivityIndicator,
-} from "react-native";
+import { View, StyleSheet, Dimensions, ActivityIndicator } from "react-native";
 import React, { useEffect, useState } from "react";
 import { useRouter } from "expo-router";
 import { ThemedView } from "@/components/ThemedView";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedButton } from "@/components/ThemedButton";
+import { ThemedTextInput } from "@/components/ThemedTextInput";
 import { generateRecommendation } from "@/services/recommendationService";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { getOrCreateUUID } from "@/utils/uuidUtil";
@@ -80,24 +75,23 @@ export default function SettingsScreen() {
         <ThemedText type="section" style={styles.inputLabel}>
           Age
         </ThemedText>
-        <TextInput
+        <ThemedTextInput
           value={age ? age.toString() : ""}
           onChangeText={(text) => {
-            if (/^[0-9]{0,3}$/.test(text)) {
+            if (/^[0-9]{0,2}$/.test(text)) {
               setAge(text);
             }
           }}
           placeholder="Enter your age"
           keyboardType="numeric"
           style={styles.input}
-          placeholderTextColor={"#C7C7CD"}
         />
       </View>
       <View style={styles.inputContainer}>
         <ThemedText type="section" style={styles.inputLabel}>
           Gender
         </ThemedText>
-        <TextInput
+        <ThemedTextInput
           value={gender || ""}
           onChangeText={(text) => {
             if (/^[a-zA-Z, -]{0,15}$/.test(text)) {
@@ -107,27 +101,13 @@ export default function SettingsScreen() {
           placeholder="Enter your gender"
           keyboardType="ascii-capable"
           style={styles.input}
-          placeholderTextColor={"#C7C7CD"}
-        />
-      </View>
-      <View style={styles.inputContainer}>
-        <ThemedText type="section" style={styles.inputLabel}>
-          Cancer Type
-        </ThemedText>
-        <TextInput
-          value="Breast Cancer"
-          // placeholder="Breast Cancer"
-          editable={false}
-          keyboardType="ascii-capable"
-          style={[styles.input]}
-          placeholderTextColor={"#C7C7CD"}
         />
       </View>
       <View style={styles.inputContainer}>
         <ThemedText type="section" style={styles.inputLabel}>
           Dietary Preferences
         </ThemedText>
-        <TextInput
+        <ThemedTextInput
           value={dietaryPreferences || ""}
           onChangeText={(text) => {
             if (/^[a-zA-Z, -]{0,30}$/.test(text)) {
@@ -137,14 +117,13 @@ export default function SettingsScreen() {
           placeholder="None, Vegetarian, Gluten Free"
           keyboardType="ascii-capable"
           style={styles.input}
-          placeholderTextColor={"#C7C7CD"}
         />
       </View>
       <View style={styles.inputContainer}>
         <ThemedText type="section" style={styles.inputLabel}>
           Exercise Activity
         </ThemedText>
-        <TextInput
+        <ThemedTextInput
           value={mobility || ""}
           onChangeText={(text) => {
             if (/^[a-zA-Z, -]{0,30}$/.test(text)) {
@@ -154,7 +133,18 @@ export default function SettingsScreen() {
           placeholder="Limited Mobility, Moderate Activity"
           keyboardType="ascii-capable"
           style={styles.input}
-          placeholderTextColor={"#C7C7CD"}
+        />
+      </View>
+      <View style={styles.inputContainer}>
+        <ThemedText type="section" style={styles.inputLabel}>
+          Cancer Type
+        </ThemedText>
+        <ThemedTextInput
+          value="Breast Cancer"
+          // placeholder="Breast Cancer"
+          editable={false}
+          keyboardType="ascii-capable"
+          style={styles.input}
         />
       </View>
       <ThemedButton text="Generate Plan" onPress={handleGeneratePlan} />
