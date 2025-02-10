@@ -1,4 +1,11 @@
-import { View, StyleSheet, Dimensions, ActivityIndicator } from "react-native";
+import {
+  View,
+  StyleSheet,
+  Dimensions,
+  ActivityIndicator,
+  TouchableWithoutFeedback,
+  Keyboard,
+} from "react-native";
 import React, { useEffect, useState } from "react";
 import { useRouter } from "expo-router";
 import { ThemedView } from "@/components/ThemedView";
@@ -69,94 +76,96 @@ export default function SettingsScreen() {
   }, []);
 
   return (
-    <ThemedView style={styles.container}>
-      <ThemedText type="title">Personal Information</ThemedText>
-      <View style={styles.inputContainer}>
-        <ThemedText type="section" style={styles.inputLabel}>
-          Age
-        </ThemedText>
-        <ThemedTextInput
-          value={age ? age.toString() : ""}
-          onChangeText={(text) => {
-            if (/^[0-9]{0,2}$/.test(text)) {
-              setAge(text);
-            }
-          }}
-          placeholder="Enter your age"
-          keyboardType="numeric"
-          style={styles.input}
-        />
-      </View>
-      <View style={styles.inputContainer}>
-        <ThemedText type="section" style={styles.inputLabel}>
-          Gender
-        </ThemedText>
-        <ThemedTextInput
-          value={gender || ""}
-          onChangeText={(text) => {
-            if (/^[a-zA-Z, -]{0,15}$/.test(text)) {
-              setGender(text);
-            }
-          }}
-          placeholder="Enter your gender"
-          keyboardType="ascii-capable"
-          style={styles.input}
-        />
-      </View>
-      <View style={styles.inputContainer}>
-        <ThemedText type="section" style={styles.inputLabel}>
-          Dietary Preferences
-        </ThemedText>
-        <ThemedTextInput
-          value={dietaryPreferences || ""}
-          onChangeText={(text) => {
-            if (/^[a-zA-Z, -]{0,30}$/.test(text)) {
-              setDietaryPreferences(text);
-            }
-          }}
-          placeholder="None, Vegetarian, Gluten Free"
-          keyboardType="ascii-capable"
-          style={styles.input}
-        />
-      </View>
-      <View style={styles.inputContainer}>
-        <ThemedText type="section" style={styles.inputLabel}>
-          Exercise Activity
-        </ThemedText>
-        <ThemedTextInput
-          value={mobility || ""}
-          onChangeText={(text) => {
-            if (/^[a-zA-Z, -]{0,30}$/.test(text)) {
-              setMobility(text);
-            }
-          }}
-          placeholder="Limited Mobility, Moderate Activity"
-          keyboardType="ascii-capable"
-          style={styles.input}
-        />
-      </View>
-      <View style={styles.inputContainer}>
-        <ThemedText type="section" style={styles.inputLabel}>
-          Cancer Type
-        </ThemedText>
-        <ThemedTextInput
-          value="Breast Cancer"
-          // placeholder="Breast Cancer"
-          editable={false}
-          keyboardType="ascii-capable"
-          style={styles.input}
-        />
-      </View>
-      <ThemedButton text="Generate Plan" onPress={handleGeneratePlan} />
-      {loading && (
-        <ActivityIndicator
-          size="large"
-          color="#0000ff"
-          style={{ marginTop: height * 0.05 }}
-        />
-      )}
-      {error && <ThemedText type="error">{error}</ThemedText>}
-    </ThemedView>
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+      <ThemedView style={styles.container}>
+        <ThemedText type="title">Personal Information</ThemedText>
+        <View style={styles.inputContainer}>
+          <ThemedText type="section" style={styles.inputLabel}>
+            Age
+          </ThemedText>
+          <ThemedTextInput
+            value={age ? age.toString() : ""}
+            onChangeText={(text) => {
+              if (/^[0-9]{0,2}$/.test(text)) {
+                setAge(text);
+              }
+            }}
+            placeholder="Enter your age"
+            keyboardType="numeric"
+            style={styles.input}
+          />
+        </View>
+        <View style={styles.inputContainer}>
+          <ThemedText type="section" style={styles.inputLabel}>
+            Gender
+          </ThemedText>
+          <ThemedTextInput
+            value={gender || ""}
+            onChangeText={(text) => {
+              if (/^[a-zA-Z, -]{0,15}$/.test(text)) {
+                setGender(text);
+              }
+            }}
+            placeholder="Enter your gender"
+            keyboardType="ascii-capable"
+            style={styles.input}
+          />
+        </View>
+        <View style={styles.inputContainer}>
+          <ThemedText type="section" style={styles.inputLabel}>
+            Dietary Preferences
+          </ThemedText>
+          <ThemedTextInput
+            value={dietaryPreferences || ""}
+            onChangeText={(text) => {
+              if (/^[a-zA-Z, -]{0,30}$/.test(text)) {
+                setDietaryPreferences(text);
+              }
+            }}
+            placeholder="None, Vegetarian, Gluten Free"
+            keyboardType="ascii-capable"
+            style={styles.input}
+          />
+        </View>
+        <View style={styles.inputContainer}>
+          <ThemedText type="section" style={styles.inputLabel}>
+            Exercise Activity
+          </ThemedText>
+          <ThemedTextInput
+            value={mobility || ""}
+            onChangeText={(text) => {
+              if (/^[a-zA-Z, -]{0,30}$/.test(text)) {
+                setMobility(text);
+              }
+            }}
+            placeholder="Limited Mobility, Moderate Activity"
+            keyboardType="ascii-capable"
+            style={styles.input}
+          />
+        </View>
+        <View style={styles.inputContainer}>
+          <ThemedText type="section" style={styles.inputLabel}>
+            Cancer Type
+          </ThemedText>
+          <ThemedTextInput
+            value="Breast Cancer"
+            // placeholder="Breast Cancer"
+            editable={false}
+            keyboardType="ascii-capable"
+            style={styles.input}
+          />
+        </View>
+        <ThemedButton text="Generate Plan" onPress={handleGeneratePlan} />
+        {loading && (
+          <ActivityIndicator
+            size="large"
+            color="#0000ff"
+            style={{ marginTop: height * 0.05 }}
+          />
+        )}
+        {error && <ThemedText type="error">{error}</ThemedText>}
+      </ThemedView>
+    </TouchableWithoutFeedback>
   );
 }
 
