@@ -17,6 +17,9 @@ export default function CompleteScreen() {
       <ThemedText type="sectionTitle">
         You have completed the Breast Cancer Navigator
       </ThemedText>
+      <ThemedText type="section">
+        Please contact us if you have any questions or feedback.
+      </ThemedText>
       <ThemedView style={styles.webview}>
         <WebView
           ref={webviewRef}
@@ -26,11 +29,6 @@ export default function CompleteScreen() {
           onLoad={() => webviewRef.current?.injectJavaScript(SCROLL_TO_CONTACT)}
         />
       </ThemedView>
-      <Link replace href={{ pathname: "/(tabs)/", params: { reset: true } }}>
-        <ThemedText type="link" style={styles.link}>
-          Retake the navigator
-        </ThemedText>
-      </Link>
     </ThemedView>
   );
 }

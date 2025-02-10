@@ -60,6 +60,7 @@ const styles = StyleSheet.create({
     fontSize: width * 0.08,
     fontWeight: "bold",
     marginBottom: height * 0.05,
+    textAlign: "center",
   },
   sectionTitle: {
     fontSize: width * 0.06,

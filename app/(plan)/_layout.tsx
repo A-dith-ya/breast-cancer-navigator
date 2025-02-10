@@ -46,6 +46,13 @@ export default function TabLayout() {
             title: "Personalized Wellness Hub",
             tabBarStyle: { backgroundColor: colors.tabBackground },
             href: null, // Hide tab from navigation
+            headerLeft: () => (
+              <TabBarIcon
+                name="chevron-back"
+                color={colors.text}
+                onPress={() => router.replace("/(info)")}
+              />
+            ),
           }}
         />
         <Tabs.Screen
@@ -54,6 +61,13 @@ export default function TabLayout() {
             title: "Settings",
             tabBarStyle: { display: "none" },
             href: null,
+            headerLeft: () => (
+              <TabBarIcon
+                name="chevron-back"
+                color={colors.text}
+                onPress={() => router.replace("/(info)")}
+              />
+            ),
           }}
         />
         <Tabs.Screen
@@ -65,6 +79,13 @@ export default function TabLayout() {
               <TabBarIcon
                 name={focused ? "nutrition" : "nutrition-outline"}
                 color={color}
+              />
+            ),
+            headerLeft: () => (
+              <TabBarIcon
+                name="chevron-back"
+                color={colors.text}
+                onPress={() => router.replace("/(plan)")}
               />
             ),
           }}
@@ -80,6 +101,13 @@ export default function TabLayout() {
                 color={color}
               />
             ),
+            headerLeft: () => (
+              <TabBarIcon
+                name="chevron-back"
+                color={colors.text}
+                onPress={() => router.replace("/(plan)")}
+              />
+            ),
           }}
         />
         <Tabs.Screen
@@ -91,6 +119,13 @@ export default function TabLayout() {
               <TabBarIcon
                 name={focused ? "happy" : "happy-outline"}
                 color={color}
+              />
+            ),
+            headerLeft: () => (
+              <TabBarIcon
+                name="chevron-back"
+                color={colors.text}
+                onPress={() => router.replace("/(plan)")}
               />
             ),
           }}
