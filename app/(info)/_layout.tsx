@@ -16,7 +16,7 @@ export default function InfoLayout() {
         <Tabs.Screen
           name="index"
           options={{
-            title: "Welcome",
+            title: "Home",
             tabBarIcon: ({ color, focused }) => (
               <TabBarIcon
                 name={focused ? "home" : "home-outline"}
@@ -28,7 +28,7 @@ export default function InfoLayout() {
         <Tabs.Screen
           name="info"
           options={{
-            title: "Instructions",
+            title: "Navigator",
             tabBarIcon: ({ color, focused }) => (
               <TabBarIcon
                 name={

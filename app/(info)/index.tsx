@@ -8,22 +8,28 @@ const { width, height } = Dimensions.get("window");
 export default function WelcomeScreen() {
   return (
     <ThemedView style={styles.container}>
-      <ThemedText type="title">Welcome to Navigator</ThemedText>
-      <ThemedText type="section">
-        This is a simple, user-friendly digital application for navigation and
-        tracking outcomes to improve your personal experience. This decision
-        support tool can enhance your experience by empowering you with basic
-        information, connecting with resources, and facilitating informed
-        communication.
+      <ThemedText type="title">
+        Welcome to {"\n"} Navigator and Supportive Care
       </ThemedText>
+      <ThemedText type="section" adjustsFontSizeToFit>
+        Tailored breast cancer educational resources
+      </ThemedText>
+      <Link href={{ pathname: "/(info)/info" }} style={styles.linkContainer}>
+        <ThemedText type="link" style={styles.link}>
+          Navigator
+        </ThemedText>
+      </Link>
+      <ThemedText type="section">
+        AI-powered breast cancer support plan
+      </ThemedText>
+      <Link href={{ pathname: "/(plan)" }} style={styles.linkContainer}>
+        <ThemedText type="link" style={styles.link}>
+          Personalized Care Path
+        </ThemedText>
+      </Link>
       <ThemedText type="section">
         Please note: This app does not collect, store, or use any personal data.
       </ThemedText>
-      <Link href={{ pathname: "/(info)/info" }}>
-        <ThemedText type="link" style={styles.link}>
-          Instructions
-        </ThemedText>
-      </Link>
     </ThemedView>
   );
 }
@@ -34,6 +40,9 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     padding: width * 0.05,
+  },
+  linkContainer: {
+    marginBottom: height * 0.05,
   },
   link: {
     fontSize: width * 0.065,
