@@ -176,47 +176,60 @@ export default function QuestionScreen() {
   }: {
     item: Question["options"][number];
     index: number;
-  }) => (
-    <>
-      {item.subOptions && typeof item.subOptions[0] === "object" ? (
-        <>
-          <ThemedText style={styles.optionText}>{item.option}</ThemedText>
-          <FlatList
-            data={item.subOptions}
-            renderItem={({ item: subItem, index: subIndex }) =>
-              renderSuboptionItem({
-                item: subItem,
-                // Add a unique index to each suboption webview ref
-                index: index * 10 + subIndex,
-                customWebViewUri: item.uri,
-              })
-            }
-            keyExtractor={(item) =>
-              typeof item === "object" ? item.subOption : item
-            }
-            style={styles.flatListContainer}
-          />
-        </>
-      ) : (
-        <>
-          {renderRadioButton(item.option)}
-          {item.subOptions &&
-            item.subOptions.map((subOption) => (
-              <ThemedText key={subOption} style={styles.subOptionText}>
-                {subOption}
-              </ThemedText>
-            ))}
-          {item.filter &&
-            selectedOptions[Math.floor(questionNumber)]?.includes(
-              item.option
-            ) &&
-            renderWebView(item.filter, index)}
-        </>
-      )}
-      {questionNumber % 1 === 0 &&
-        renderImage(Math.floor(questionNumber), index)}
-    </>
-  );
+  }) => {
+    // Skip rendering the option if it does not have a filter or suboptions
+    if (
+      (!item.filter &&
+        !(item.subOptions && typeof item.subOptions[0] === "object")) ||
+      (item.subOptions &&
+        typeof item.subOptions[0] === "object" &&
+        !item.subOptions[0].filter)
+    ) {
+      return null;
+    }
+
+    return (
+      <>
+        {item.subOptions && typeof item.subOptions[0] === "object" ? (
+          <>
+            <ThemedText style={styles.optionText}>{item.option}</ThemedText>
+            <FlatList
+              data={item.subOptions}
+              renderItem={({ item: subItem, index: subIndex }) =>
+                renderSuboptionItem({
+                  item: subItem,
+                  // Add a unique index to each suboption webview ref
+                  index: index * 10 + subIndex,
+                  customWebViewUri: item.uri,
+                })
+              }
+              keyExtractor={(item) =>
+                typeof item === "object" ? item.subOption : item
+              }
+              style={styles.flatListContainer}
+            />
+          </>
+        ) : (
+          <>
+            {renderRadioButton(item.option)}
+            {item.subOptions &&
+              item.subOptions.map((subOption) => (
+                <ThemedText key={subOption} style={styles.subOptionText}>
+                  {subOption}
+                </ThemedText>
+              ))}
+            {item.filter &&
+              selectedOptions[Math.floor(questionNumber)]?.includes(
+                item.option
+              ) &&
+              renderWebView(item.filter, index)}
+          </>
+        )}
+        {questionNumber % 1 === 0 &&
+          renderImage(Math.floor(questionNumber), index)}
+      </>
+    );
+  };
 
   useEffect(() => {
     // Update the webview uri based on the current question number
