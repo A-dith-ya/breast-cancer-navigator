@@ -35,7 +35,7 @@ export default function InfoScreen() {
       <ThemedButton
         text="Start Navigator"
         type="defaultSemiBold"
-        onPress={() => router.push("/(tabs)/")}
+        onPress={() => router.push("/(tabs)/contents")}
       />
     </ThemedView>
   );
