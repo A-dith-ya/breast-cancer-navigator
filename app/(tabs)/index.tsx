@@ -232,6 +232,16 @@ export default function QuestionScreen() {
   };
 
   useEffect(() => {
+    // Check if an initial question number is passed from the Contents screen
+    if (local.initialQuestionNumber) {
+      const initialQuestionNumber = parseFloat(
+        local.initialQuestionNumber as string
+      );
+      setQuestionNumber(initialQuestionNumber);
+    }
+  }, [local.initialQuestionNumber]);
+
+  useEffect(() => {
     // Update the webview uri based on the current question number
     switch (questionNumber) {
       case 0:
