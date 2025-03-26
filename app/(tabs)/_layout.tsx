@@ -29,11 +29,14 @@ export default function TabLayout() {
             title: "Navigator Contents",
             tabBarStyle: { display: "none" },
             headerLeft: () => (
-              <TabBarIcon
-                name="chevron-back"
-                color={colors.text}
-                onPress={() => router.replace("/(info)/info")}
-              />
+              <>
+                <TabBarIcon
+                  name="chevron-back"
+                  color={colors.text}
+                  onPress={() => router.replace("/(info)/info")}
+                />
+                <ThemedText>Contents</ThemedText>
+              </>
             ),
           }}
         />
