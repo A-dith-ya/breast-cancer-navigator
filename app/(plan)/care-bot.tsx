@@ -32,11 +32,12 @@ interface Message {
 export default function CarebotScreen() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputText, setInputText] = useState("");
+  const [isProcessing, setIsProcessing] = useState(false);
   const webviewRefs = useRef<WebView[]>([]);
   const scrollViewRef = useRef<ScrollView>(null);
 
   const handleSendMessage = useCallback(async () => {
-    if (inputText.trim() === "") return;
+    if (inputText.trim() === "" || isProcessing) return;
 
     // Create user message
     const userMessage: Message = {
@@ -52,6 +53,9 @@ export default function CarebotScreen() {
       sender: "bot",
       isLoading: true,
     };
+
+    // Set processing state to prevent multiple submissions
+    setIsProcessing(true);
 
     // Update messages with user message and loading indicator
     setMessages((prevMessages) => [
@@ -102,8 +106,11 @@ export default function CarebotScreen() {
       };
 
       setMessages((prevMessages) => [...prevMessages, errorMessage]);
+    } finally {
+      // Reset processing state
+      setIsProcessing(false);
     }
-  }, [inputText]);
+  }, [inputText, isProcessing]);
 
   const renderMessage = (message: Message) => {
     return (
@@ -177,11 +184,13 @@ export default function CarebotScreen() {
             style={styles.input}
             returnKeyType="send"
             onSubmitEditing={handleSendMessage}
+            editable={!isProcessing}
           />
           <ThemedButton
             text="Send"
             onPress={handleSendMessage}
             style={styles.sendButton}
+            disabled={isProcessing || inputText.trim() === ""}
           />
         </ThemedView>
       </ThemedView>
