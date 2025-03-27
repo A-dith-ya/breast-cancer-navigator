@@ -29,21 +29,18 @@ export default function TabLayout() {
             title: "Navigator Contents",
             tabBarStyle: { display: "none" },
             headerLeft: () => (
-              <>
-                <TabBarIcon
-                  name="chevron-back"
-                  color={colors.text}
-                  onPress={() => router.replace("/(info)/info")}
-                />
-                <ThemedText>Contents</ThemedText>
-              </>
+              <TabBarIcon
+                name="chevron-back"
+                color={colors.text}
+                onPress={() => router.replace("/(info)/info")}
+              />
             ),
           }}
         />
         <Tabs.Screen
           name="index"
           options={{
-            title: "Breast Cancer Navigator",
+            title: "Navigator",
             tabBarStyle: { display: "none" },
             tabBarIcon: ({ color, focused }) => (
               <TabBarIcon
@@ -54,11 +51,14 @@ export default function TabLayout() {
               />
             ),
             headerLeft: () => (
-              <TabBarIcon
-                name="chevron-back"
-                color={colors.text}
-                onPress={() => router.replace("/(tabs)/contents")}
-              />
+              <>
+                <TabBarIcon
+                  name="chevron-back"
+                  color={colors.text}
+                  onPress={() => router.replace("/(tabs)/contents")}
+                />
+                <ThemedText>Contents</ThemedText>
+              </>
             ),
           }}
         />
