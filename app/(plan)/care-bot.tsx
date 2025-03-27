@@ -8,6 +8,7 @@ import {
   Platform,
   KeyboardAvoidingView,
   ScrollView,
+  ActivityIndicator,
 } from "react-native";
 import { WebView } from "react-native-webview";
 import { ThemedView } from "@/components/ThemedView";
@@ -25,6 +26,7 @@ interface Message {
   text: string;
   sender: "user" | "bot";
   url?: string;
+  isLoading?: boolean;
 }
 
 export default function CarebotScreen() {
@@ -43,36 +45,64 @@ export default function CarebotScreen() {
       sender: "user",
     };
 
+    // Create loading bot message
+    const loadingBotMessage: Message = {
+      id: Date.now() + 1,
+      text: "Searching...",
+      sender: "bot",
+      isLoading: true,
+    };
+
+    // Update messages with user message and loading indicator
+    setMessages((prevMessages) => [
+      ...prevMessages,
+      userMessage,
+      loadingBotMessage,
+    ]);
+    setInputText("");
+    Keyboard.dismiss();
+
     // Determine bot response based on input
-    let botResponse: Message;
     try {
       const webResource = await getWebResource(inputText);
 
+      // Remove the loading message
+      setMessages((prevMessages) =>
+        prevMessages.filter((msg) => msg.id !== loadingBotMessage.id)
+      );
+
       if (webResource.url && webResource.title) {
-        botResponse = {
-          id: Date.now() + 1,
+        const botResponse: Message = {
+          id: Date.now() + 2,
           text: webResource.title,
           sender: "bot",
           url: webResource.url,
         };
+
+        setMessages((prevMessages) => [...prevMessages, botResponse]);
       } else {
-        botResponse = {
-          id: Date.now() + 1,
+        const botResponse: Message = {
+          id: Date.now() + 2,
           text: "I couldn't find relevant information. Please try again.",
           sender: "bot",
         };
+
+        setMessages((prevMessages) => [...prevMessages, botResponse]);
       }
     } catch (error) {
-      botResponse = {
-        id: Date.now() + 1,
+      // Remove the loading message
+      setMessages((prevMessages) =>
+        prevMessages.filter((msg) => msg.id !== loadingBotMessage.id)
+      );
+
+      const errorMessage: Message = {
+        id: Date.now() + 2,
         text: "Sorry, I encountered an error while processing your request.",
         sender: "bot",
       };
-    }
 
-    setMessages((prevMessages) => [...prevMessages, userMessage, botResponse]);
-    setInputText("");
-    Keyboard.dismiss();
+      setMessages((prevMessages) => [...prevMessages, errorMessage]);
+    }
   }, [inputText]);
 
   const renderMessage = (message: Message) => {
@@ -98,15 +128,25 @@ export default function CarebotScreen() {
             message.sender === "user" ? styles.userMessage : styles.botMessage,
           ]}
         >
-          <ThemedText
-            style={[styles.messageText, message.url && styles.urlText]}
-          >
-            {message.text}
-          </ThemedText>
-          {message.url && (
-            <ThemedText style={styles.urlLinkText}>
-              Tap to open full resource
-            </ThemedText>
+          {message.isLoading ? (
+            <ActivityIndicator
+              size="small"
+              color="white"
+              style={styles.loadingIndicator}
+            />
+          ) : (
+            <>
+              <ThemedText
+                style={[styles.messageText, message.url && styles.urlText]}
+              >
+                {message.text}
+              </ThemedText>
+              {message.url && (
+                <ThemedText style={styles.urlLinkText}>
+                  Tap to open full resource
+                </ThemedText>
+              )}
+            </>
           )}
         </TouchableOpacity>
       </View>
@@ -168,6 +208,8 @@ const styles = StyleSheet.create({
     padding: 10,
     marginVertical: 5,
     borderRadius: 10,
+    minHeight: 50,
+    justifyContent: "center",
   },
   userMessage: {
     alignSelf: "flex-end",
@@ -203,6 +245,9 @@ const styles = StyleSheet.create({
   },
   sendButton: {
     paddingHorizontal: 15,
+  },
+  loadingIndicator: {
+    alignSelf: "center",
   },
 });
 
