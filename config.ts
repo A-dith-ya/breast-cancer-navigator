@@ -13,6 +13,9 @@ const config = {
   API_BASE_URL: process.env.EXPO_PUBLIC_API_URL,
   UUID_KEY: "DEVICE_UNIQUE_ID",
   RECOMMENDATION_KEY: "RECOMMENDATION_KEY",
+
+  OPENAI_API_KEY: process.env.OPENAI_API_KEY,
+  OPENAI_ASSISTANT_ID: process.env.OPENAI_ASSISTANT_ID,
 };
 
 export default config;
