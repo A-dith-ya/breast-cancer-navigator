@@ -9,6 +9,7 @@ import {
   KeyboardAvoidingView,
   ScrollView,
   ActivityIndicator,
+  FlatList,
 } from "react-native";
 import { WebView } from "react-native-webview";
 import { ThemedView } from "@/components/ThemedView";
@@ -29,6 +30,15 @@ interface Message {
   isLoading?: boolean;
 }
 
+// Example questions to guide users
+const EXAMPLE_QUESTIONS = [
+  "What questions can I ask about my breast cancer diagnosis?",
+  "What are the treatments based on the stage of breast cancer?",
+  "What does a personalized treatment plan include, such as lifestyle changes?",
+  "What are the different stages of healing after breast cancer surgery?",
+  "What are the different types of breast reconstruction surgery?",
+];
+
 export default function CarebotScreen() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputText, setInputText] = useState("");
@@ -36,81 +46,105 @@ export default function CarebotScreen() {
   const webviewRefs = useRef<WebView[]>([]);
   const scrollViewRef = useRef<ScrollView>(null);
 
-  const handleSendMessage = useCallback(async () => {
-    if (inputText.trim() === "" || isProcessing) return;
+  const handleExampleQuestion = (question: string) => {
+    // setInputText(question);
+    handleSendMessage(question);
+  };
 
-    // Create user message
-    const userMessage: Message = {
-      id: Date.now(),
-      text: inputText,
-      sender: "user",
-    };
+  const handleSendMessage = useCallback(
+    async (predefinedQuestion?: string) => {
+      const currentInput = predefinedQuestion || inputText;
 
-    // Create loading bot message
-    const loadingBotMessage: Message = {
-      id: Date.now() + 1,
-      text: "Searching...",
-      sender: "bot",
-      isLoading: true,
-    };
+      if (currentInput.trim() === "" || isProcessing) return;
 
-    // Set processing state to prevent multiple submissions
-    setIsProcessing(true);
-
-    // Update messages with user message and loading indicator
-    setMessages((prevMessages) => [
-      ...prevMessages,
-      userMessage,
-      loadingBotMessage,
-    ]);
-    setInputText("");
-    Keyboard.dismiss();
-
-    // Determine bot response based on input
-    try {
-      const webResource = await getWebResource(inputText);
-
-      // Remove the loading message
-      setMessages((prevMessages) =>
-        prevMessages.filter((msg) => msg.id !== loadingBotMessage.id)
-      );
-
-      if (webResource.url && webResource.title) {
-        const botResponse: Message = {
-          id: Date.now() + 2,
-          text: webResource.title,
-          sender: "bot",
-          url: webResource.url,
-        };
-
-        setMessages((prevMessages) => [...prevMessages, botResponse]);
-      } else {
-        const botResponse: Message = {
-          id: Date.now() + 2,
-          text: "I couldn't find relevant information. Please try again.",
-          sender: "bot",
-        };
-
-        setMessages((prevMessages) => [...prevMessages, botResponse]);
-      }
-    } catch (error) {
-      // Remove the loading message
-      setMessages((prevMessages) =>
-        prevMessages.filter((msg) => msg.id !== loadingBotMessage.id)
-      );
-
-      const errorMessage: Message = {
-        id: Date.now() + 2,
-        text: "Sorry, I encountered an error while processing your request.",
-        sender: "bot",
+      // Create user message
+      const userMessage: Message = {
+        id: Date.now(),
+        text: currentInput,
+        sender: "user",
       };
 
-      setMessages((prevMessages) => [...prevMessages, errorMessage]);
-    } finally {
-      // Reset processing state
-      setIsProcessing(false);
-    }
-  }, [inputText, isProcessing]);
+      // Create loading bot message
+      const loadingBotMessage: Message = {
+        id: Date.now() + 1,
+        text: "Searching...",
+        sender: "bot",
+        isLoading: true,
+      };
+
+      // Set processing state to prevent multiple submissions
+      setIsProcessing(true);
+
+      // Update messages with user message and loading indicator
+      setMessages((prevMessages) => [
+        ...prevMessages,
+        userMessage,
+        loadingBotMessage,
+      ]);
+
+      // Clear input for non-predefined questions
+      if (!predefinedQuestion) {
+        setInputText("");
+      }
+
+      Keyboard.dismiss();
+
+      // Determine bot response based on input
+      try {
+        const webResource = await getWebResource(currentInput);
+
+        // Remove the loading message
+        setMessages((prevMessages) =>
+          prevMessages.filter((msg) => msg.id !== loadingBotMessage.id)
+        );
+
+        if (webResource.url && webResource.title) {
+          const botResponse: Message = {
+            id: Date.now() + 2,
+            text: webResource.title,
+            sender: "bot",
+            url: webResource.url,
+          };
+
+          setMessages((prevMessages) => [...prevMessages, botResponse]);
+        } else {
+          const botResponse: Message = {
+            id: Date.now() + 2,
+            text: "I couldn't find relevant information. Please try again.",
+            sender: "bot",
+          };
+
+          setMessages((prevMessages) => [...prevMessages, botResponse]);
+        }
+      } catch (error) {
+        // Remove the loading message
+        setMessages((prevMessages) =>
+          prevMessages.filter((msg) => msg.id !== loadingBotMessage.id)
+        );
+
+        const errorMessage: Message = {
+          id: Date.now() + 2,
+          text: "Sorry, I encountered an error while processing your request.",
+          sender: "bot",
+        };
+
+        setMessages((prevMessages) => [...prevMessages, errorMessage]);
+      } finally {
+        // Reset processing state
+        setIsProcessing(false);
+      }
+    },
+    [inputText, isProcessing]
+  );
+
+  const renderExampleQuestion = ({ item }: { item: string }) => (
+    <TouchableOpacity
+      style={styles.exampleQuestionContainer}
+      onPress={() => handleExampleQuestion(item)}
+    >
+      <ThemedText style={styles.exampleQuestionText}>{item}</ThemedText>
+    </TouchableOpacity>
+  );
 
   const renderMessage = (message: Message) => {
     return (
@@ -167,6 +201,19 @@ export default function CarebotScreen() {
       keyboardVerticalOffset={Platform.OS === "ios" ? 60 : 0}
     >
       <ThemedView style={styles.container}>
+        <ThemedView style={styles.exampleQuestionsHeader}>
+          <ThemedText style={styles.exampleQuestionsTitle}>
+            Example Questions
+          </ThemedText>
+          <FlatList
+            horizontal
+            data={EXAMPLE_QUESTIONS}
+            renderItem={renderExampleQuestion}
+            keyExtractor={(item, index) => index.toString()}
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.exampleQuestionsList}
+          />
+        </ThemedView>
         <ScrollView
           ref={scrollViewRef}
           contentContainerStyle={styles.messagesContainer}
@@ -183,12 +230,12 @@ export default function CarebotScreen() {
             placeholder="Ask a question..."
             style={styles.input}
             returnKeyType="send"
-            onSubmitEditing={handleSendMessage}
+            onSubmitEditing={() => handleSendMessage()}
             editable={!isProcessing}
           />
           <ThemedButton
             text="Send"
-            onPress={handleSendMessage}
+            onPress={() => handleSendMessage()}
             style={styles.sendButton}
             disabled={isProcessing || inputText.trim() === ""}
           />
@@ -201,6 +248,32 @@ export default function CarebotScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  exampleQuestionsHeader: {
+    paddingVertical: 10,
+    paddingHorizontal: 5,
+  },
+  exampleQuestionsTitle: {
+    fontSize: 16,
+    fontWeight: "bold",
+    marginBottom: 10,
+    marginLeft: 10,
+  },
+  exampleQuestionsList: {
+    paddingHorizontal: 5,
+  },
+  exampleQuestionContainer: {
+    backgroundColor: "#e0e0e0",
+    borderRadius: 20,
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    marginHorizontal: 5,
+    maxWidth: width * 0.7,
+  },
+  exampleQuestionText: {
+    fontSize: 12,
+    color: "#333",
+    textAlign: "center",
   },
   messagesContainer: {
     padding: 10,
