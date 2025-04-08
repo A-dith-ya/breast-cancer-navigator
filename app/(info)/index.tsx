@@ -87,28 +87,30 @@ export default function WelcomeScreen() {
       >
         {/* Hero Section */}
         <View style={styles.heroSection}>
-          <Text style={styles.title}>Navigator and{"\n"}Supportive Care</Text>
-          <Text style={styles.subtitle}>Empowering Breast Cancer Support</Text>
+          <Text style={styles.title}>Supportive Care{"\n"}& Survivorship</Text>
+          <Text style={styles.subtitle}>
+            Empowering lives for a better quality of life
+          </Text>
         </View>
 
         {/* Navigation Cards */}
         <NavigationCard
-          title="Care Path AI"
-          description="Compassionate AI Support"
+          title="Compassionate Support"
+          description="Ask Questions, Get Personalized Support"
           route="/(tabs)/care-bot"
           icon="chatbubble-outline"
         />
 
         <NavigationCard
-          title="Personalized Care Path"
-          description="AI-Powered Support Plan"
+          title="Personalized Wellness"
+          description="AI-Powered Guidance Plan"
           route="/(plan)"
           icon="heart-outline"
         />
 
         <NavigationCard
-          title="Navigator"
-          description="Tailored Educational Resources"
+          title="Tailored Learning"
+          description="Discover Comprehensive Educational Resources"
           route="/(info)/info"
           icon="book-outline"
         />

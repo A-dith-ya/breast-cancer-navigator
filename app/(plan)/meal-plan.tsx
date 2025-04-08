@@ -58,7 +58,9 @@ export default function MealPlanScreen() {
           {/* Hero Section */}
           <View style={styles.heroSection}>
             <Text style={styles.title}>{dietType}</Text>
-            <Text style={styles.subtitle}>{nutritionalFocus}</Text>
+            <Text style={styles.subtitle} numberOfLines={2}>
+              {nutritionalFocus}
+            </Text>
           </View>
 
           {/* Meal Plan Scroll View */}

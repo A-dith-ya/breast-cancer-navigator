@@ -33,10 +33,19 @@ interface Message {
 // Example questions to guide users
 const EXAMPLE_QUESTIONS = [
   "What questions can I ask about my breast cancer diagnosis?",
-  "What are the treatments based on the stage of breast cancer?",
-  "What does a personalized treatment plan include?",
-  "What are the stages of healing after surgery?",
-  "What are breast reconstruction surgery types?",
+  "When can I return to daily activities, and what should I keep in mind?",
+  "What nutrients are important to include in my diet?",
+  "How can I prevent and detect lymphedema?",
+  "What should I expect during follow-up care?",
+  "How can I lower my risk of breast cancer coming back?",
+  "What are some ways to cope with the emotional effects of breast cancer?",
+  "How does breast cancer affect fertility, body image, and sexuality?",
+  "Where can I find support groups for breast cancer?",
+  "What does a healthy wellness plan look like?",
+  "Where can I find financial assistance?",
+  "How can I handle relationship challenges during treatment?",
+  "What should I consider when making an advance care plan?",
+  "What is palliative care?",
 ];
 
 export default function CarebotScreen() {
@@ -200,9 +209,9 @@ export default function CarebotScreen() {
           {/* Hero Section */}
           <View style={styles.heroSection}>
             {/* <Text style={styles.title}>Compassionate AI Support</Text> */}
-            <Text style={styles.subtitle}>
+            {/* <Text style={styles.subtitle}>
               Ask Questions, Get Personalized Guidance
-            </Text>
+            </Text> */}
           </View>
 
           {/* Example Questions */}
