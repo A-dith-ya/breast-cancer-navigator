@@ -28,6 +28,7 @@ export default function TabLayout() {
           options={{
             title: "Navigator Contents",
             tabBarStyle: { display: "none" },
+            href: null,
             headerLeft: () => (
               <TabBarIcon
                 name="chevron-back"
@@ -82,10 +83,25 @@ export default function TabLayout() {
                 <TabBarIcon
                   name="chevron-back"
                   color={colors.text}
-                  onPress={() => router.replace("/(info)")}
+                  onPress={() => router.replace("/(tabs)/contents")}
                 />
-                <ThemedText>Home</ThemedText>
+                <ThemedText>Contents</ThemedText>
               </>
+            ),
+          }}
+        />
+        <Tabs.Screen
+          name="care-bot"
+          options={{
+            title: "Care Path AI",
+            tabBarStyle: { display: "none" },
+            href: null,
+            headerLeft: () => (
+              <TabBarIcon
+                name="chevron-back"
+                color={colors.text}
+                onPress={() => router.replace("/(info)")}
+              />
             ),
           }}
         />

@@ -1,6 +1,7 @@
 import React, { useState, useRef, useCallback } from "react";
 import {
   View,
+  Text,
   StyleSheet,
   Dimensions,
   TouchableOpacity,
@@ -10,15 +11,14 @@ import {
   ScrollView,
   ActivityIndicator,
   FlatList,
+  TextInput,
 } from "react-native";
 import { WebView } from "react-native-webview";
-import { ThemedView } from "@/components/ThemedView";
-import { ThemedText } from "@/components/ThemedText";
-import { ThemedTextInput } from "@/components/ThemedTextInput";
-import { ThemedButton } from "@/components/ThemedButton";
+import { LinearGradient } from "expo-linear-gradient";
+import Ionicons from "@expo/vector-icons/Ionicons";
+import { Linking } from "react-native";
 import { getWebResource } from "@/services/openAiService";
 import { SCROLL_TO_CHAPTER } from "@/constants/InjectedJavascript";
-import { Linking } from "react-native";
 
 const { width, height } = Dimensions.get("window");
 
@@ -34,9 +34,9 @@ interface Message {
 const EXAMPLE_QUESTIONS = [
   "What questions can I ask about my breast cancer diagnosis?",
   "What are the treatments based on the stage of breast cancer?",
-  "What does a personalized treatment plan include, such as lifestyle changes?",
-  "What are the different stages of healing after breast cancer surgery?",
-  "What are the different types of breast reconstruction surgery?",
+  "What does a personalized treatment plan include?",
+  "What are the stages of healing after surgery?",
+  "What are breast reconstruction surgery types?",
 ];
 
 export default function CarebotScreen() {
@@ -47,7 +47,6 @@ export default function CarebotScreen() {
   const scrollViewRef = useRef<ScrollView>(null);
 
   const handleExampleQuestion = (question: string) => {
-    // setInputText(question);
     handleSendMessage(question);
   };
 
@@ -142,7 +141,7 @@ export default function CarebotScreen() {
       style={styles.exampleQuestionContainer}
       onPress={() => handleExampleQuestion(item)}
     >
-      <ThemedText style={styles.exampleQuestionText}>{item}</ThemedText>
+      <Text style={styles.exampleQuestionText}>{item}</Text>
     </TouchableOpacity>
   );
 
@@ -177,15 +176,11 @@ export default function CarebotScreen() {
             />
           ) : (
             <>
-              <ThemedText
-                style={[styles.messageText, message.url && styles.urlText]}
-              >
-                {message.text}
-              </ThemedText>
+              <Text style={styles.messageText}>{message.text}</Text>
               {message.url && (
-                <ThemedText style={styles.urlLinkText}>
+                <Text style={styles.urlLinkText}>
                   Tap to open full resource
-                </ThemedText>
+                </Text>
               )}
             </>
           )}
@@ -195,53 +190,71 @@ export default function CarebotScreen() {
   };
 
   return (
-    <KeyboardAvoidingView
-      style={{ flex: 1 }}
-      behavior={Platform.OS === "ios" ? "padding" : undefined}
-      keyboardVerticalOffset={Platform.OS === "ios" ? 60 : 0}
-    >
-      <ThemedView style={styles.container}>
-        <ThemedView style={styles.exampleQuestionsHeader}>
-          <ThemedText style={styles.exampleQuestionsTitle}>
-            Example Questions
-          </ThemedText>
-          <FlatList
-            horizontal
-            data={EXAMPLE_QUESTIONS}
-            renderItem={renderExampleQuestion}
-            keyExtractor={(item, index) => index.toString()}
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={styles.exampleQuestionsList}
-          />
-        </ThemedView>
-        <ScrollView
-          ref={scrollViewRef}
-          contentContainerStyle={styles.messagesContainer}
-          onContentSizeChange={() =>
-            scrollViewRef.current?.scrollToEnd({ animated: true })
-          }
-        >
-          {messages.map(renderMessage)}
-        </ScrollView>
-        <ThemedView style={styles.inputContainer}>
-          <ThemedTextInput
-            value={inputText}
-            onChangeText={setInputText}
-            placeholder="Ask a question..."
-            style={styles.input}
-            returnKeyType="send"
-            onSubmitEditing={() => handleSendMessage()}
-            editable={!isProcessing}
-          />
-          <ThemedButton
-            text="Send"
-            onPress={() => handleSendMessage()}
-            style={styles.sendButton}
-            disabled={isProcessing || inputText.trim() === ""}
-          />
-        </ThemedView>
-      </ThemedView>
-    </KeyboardAvoidingView>
+    <LinearGradient colors={["#FF1493", "#B13D8D"]} style={styles.container}>
+      <KeyboardAvoidingView
+        style={{ flex: 1 }}
+        behavior={Platform.OS === "ios" ? "padding" : undefined}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 60 : 0}
+      >
+        <View style={styles.content}>
+          {/* Hero Section */}
+          <View style={styles.heroSection}>
+            {/* <Text style={styles.title}>Compassionate AI Support</Text> */}
+            <Text style={styles.subtitle}>
+              Ask Questions, Get Personalized Guidance
+            </Text>
+          </View>
+
+          {/* Example Questions */}
+          <View style={styles.exampleQuestionsContainer}>
+            <FlatList
+              horizontal
+              data={EXAMPLE_QUESTIONS}
+              renderItem={renderExampleQuestion}
+              keyExtractor={(item, index) => index.toString()}
+              showsHorizontalScrollIndicator={false}
+            />
+          </View>
+
+          {/* Messages Scroll View */}
+          <ScrollView
+            ref={scrollViewRef}
+            style={styles.messagesScrollView}
+            contentContainerStyle={styles.messagesContainer}
+            onContentSizeChange={() =>
+              scrollViewRef.current?.scrollToEnd({ animated: true })
+            }
+          >
+            {messages.map(renderMessage)}
+          </ScrollView>
+
+          {/* Input Container */}
+          <View style={styles.inputContainer}>
+            <TextInput
+              value={inputText}
+              onChangeText={setInputText}
+              placeholder="Ask a question..."
+              placeholderTextColor="#FFD7E6"
+              style={styles.input}
+              returnKeyType="send"
+              onSubmitEditing={() => handleSendMessage()}
+              editable={!isProcessing}
+            />
+            <TouchableOpacity
+              onPress={() => handleSendMessage()}
+              style={[
+                styles.sendButton,
+                (isProcessing || inputText.trim() === "") &&
+                  styles.sendButtonDisabled,
+              ]}
+              disabled={isProcessing || inputText.trim() === ""}
+            >
+              <Ionicons name="send" color="#FFFFFF" size={width * 0.06} />
+            </TouchableOpacity>
+          </View>
+        </View>
+      </KeyboardAvoidingView>
+    </LinearGradient>
   );
 }
 
@@ -249,21 +262,32 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  exampleQuestionsHeader: {
-    paddingVertical: 10,
-    paddingHorizontal: 5,
+  content: {
+    flex: 1,
+    width: width * 0.9,
+    alignSelf: "center",
   },
-  exampleQuestionsTitle: {
-    fontSize: 16,
-    fontWeight: "bold",
-    marginBottom: 10,
-    marginLeft: 10,
+  heroSection: {
+    alignItems: "center",
+    marginBottom: height * 0.02,
   },
-  exampleQuestionsList: {
-    paddingHorizontal: 5,
+  title: {
+    fontSize: width * 0.07,
+    fontWeight: "700",
+    color: "#FFFFFF",
+    textAlign: "center",
+    marginBottom: height * 0.01,
+  },
+  subtitle: {
+    fontSize: width * 0.04,
+    color: "#FFD7E6",
+    textAlign: "center",
+  },
+  exampleQuestionsContainer: {
+    marginBottom: height * 0.02,
   },
   exampleQuestionContainer: {
-    backgroundColor: "#e0e0e0",
+    backgroundColor: "rgba(255,255,255,0.2)",
     borderRadius: 20,
     paddingVertical: 8,
     paddingHorizontal: 12,
@@ -271,13 +295,41 @@ const styles = StyleSheet.create({
     maxWidth: width * 0.7,
   },
   exampleQuestionText: {
-    fontSize: 12,
-    color: "#333",
+    fontSize: width * 0.035,
+    color: "#FFFFFF",
     textAlign: "center",
   },
+  messagesScrollView: {
+    flex: 1,
+  },
   messagesContainer: {
-    padding: 10,
+    paddingHorizontal: 10,
     paddingBottom: 20,
+  },
+  messageContainer: {
+    maxWidth: "80%",
+    padding: width * 0.04,
+    marginVertical: height * 0.01,
+    borderRadius: 15,
+    minHeight: 50,
+    justifyContent: "center",
+  },
+  userMessage: {
+    alignSelf: "flex-end",
+    backgroundColor: "rgba(255,255,255,0.3)",
+  },
+  botMessage: {
+    alignSelf: "flex-start",
+    backgroundColor: "rgba(255,255,255,0.2)",
+  },
+  messageText: {
+    fontSize: width * 0.04,
+    color: "#FFFFFF",
+  },
+  urlLinkText: {
+    fontSize: width * 0.03,
+    color: "#FFD7E6",
+    marginTop: 5,
   },
   webview: {
     width: width * 0.9,
@@ -285,52 +337,30 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     marginBottom: 10,
   },
-  messageContainer: {
-    maxWidth: "80%",
-    padding: 10,
-    marginVertical: 5,
-    borderRadius: 10,
-    minHeight: 50,
-    justifyContent: "center",
-  },
-  userMessage: {
-    alignSelf: "flex-end",
-    backgroundColor: "#0d47a1",
-  },
-  botMessage: {
-    alignSelf: "flex-start",
-    backgroundColor: "#121212",
-  },
-  messageText: {
-    fontSize: 16,
-    color: "white",
-  },
-  urlText: {
-    color: "lightblue",
-  },
-  urlLinkText: {
-    fontSize: 12,
-    color: "lightgrey",
-    marginTop: 5,
-  },
   inputContainer: {
     flexDirection: "row",
-    padding: 10,
     alignItems: "center",
+    marginBottom: height * 0.02,
   },
   input: {
     flex: 1,
-    marginRight: 10,
-    padding: 10,
-    borderWidth: 1,
+    backgroundColor: "rgba(255,255,255,0.2)",
     borderRadius: 20,
+    padding: width * 0.04,
+    color: "#FFFFFF",
+    marginRight: width * 0.03,
   },
   sendButton: {
-    paddingHorizontal: 15,
+    backgroundColor: "rgba(255,255,255,0.3)",
+    borderRadius: 50,
+    padding: width * 0.03,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  sendButtonDisabled: {
+    opacity: 0.5,
   },
   loadingIndicator: {
     alignSelf: "center",
   },
 });
-
-export default CarebotScreen;
