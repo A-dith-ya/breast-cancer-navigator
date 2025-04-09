@@ -1,18 +1,9 @@
 import React, { useEffect, useState } from "react";
-import {
-  View,
-  Text,
-  ScrollView,
-  FlatList,
-  StyleSheet,
-  Dimensions,
-} from "react-native";
+import { View, Text, ScrollView, FlatList, StyleSheet } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { LinearGradient } from "expo-linear-gradient";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import config from "@/config";
-
-const { width, height } = Dimensions.get("window");
 
 interface ExercisePlan {
   MobilityLevel: string;
@@ -66,7 +57,7 @@ export default function FitnessPlanScreen() {
                       ? "barbell-outline"
                       : "body-outline"
                   }
-                  size={width * 0.06}
+                  size={20}
                   color="#FFFFFF"
                   style={styles.icon}
                 />
@@ -79,7 +70,7 @@ export default function FitnessPlanScreen() {
                   <View style={styles.listItemContainer}>
                     <Ionicons
                       name="arrow-forward"
-                      size={width * 0.04}
+                      size={16}
                       color="#FFD7E6"
                       style={styles.bulletIcon}
                     />
@@ -94,7 +85,7 @@ export default function FitnessPlanScreen() {
             <View style={styles.sectionTitleContainer}>
               <Ionicons
                 name="bulb-outline"
-                size={width * 0.06}
+                size={20}
                 color="#FFFFFF"
                 style={styles.icon}
               />
@@ -107,7 +98,7 @@ export default function FitnessPlanScreen() {
                 <View style={styles.listItemContainer}>
                   <Ionicons
                     name="checkmark-done-outline"
-                    size={width * 0.04}
+                    size={16}
                     color="#FFD7E6"
                     style={styles.bulletIcon}
                   />
@@ -128,39 +119,39 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
-    width: width * 0.9,
+    width: "90%",
     alignSelf: "center",
-    paddingTop: height * 0.025,
+    paddingTop: 20,
   },
   heroSection: {
     alignItems: "center",
-    marginBottom: height * 0.03,
+    marginBottom: 24,
   },
   title: {
-    fontSize: width * 0.07,
+    fontSize: 28,
     fontWeight: "700",
     color: "#FFFFFF",
     textAlign: "center",
-    marginBottom: height * 0.005,
+    marginBottom: 4,
   },
   subtitle: {
-    fontSize: width * 0.045,
+    fontSize: 18,
     fontWeight: "600",
     color: "#FFD7E6",
     textAlign: "center",
-    marginBottom: height * 0.005,
+    marginBottom: 4,
   },
   description: {
-    fontSize: width * 0.04,
+    fontSize: 16,
     color: "#FFEAF4",
     textAlign: "center",
-    marginBottom: height * 0.02,
+    marginBottom: 16,
   },
   section: {
     backgroundColor: "rgba(255,255,255,0.2)",
-    borderRadius: 15,
-    padding: width * 0.04,
-    marginBottom: height * 0.025,
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 20,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.08,
@@ -170,28 +161,28 @@ const styles = StyleSheet.create({
   sectionTitleContainer: {
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: height * 0.015,
+    marginBottom: 12,
   },
   icon: {
-    marginRight: width * 0.03,
+    marginRight: 12,
   },
   sectionTitle: {
     color: "#FFFFFF",
-    fontSize: width * 0.05,
+    fontSize: 20,
     fontWeight: "600",
   },
   listItemContainer: {
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: height * 0.01,
+    marginBottom: 8,
   },
   bulletIcon: {
-    marginRight: width * 0.03,
+    marginRight: 12,
   },
   listItem: {
     color: "#FFEAF4",
-    fontSize: width * 0.035,
-    lineHeight: width * 0.05,
+    fontSize: 14,
+    lineHeight: 20,
     flex: 1,
   },
 });

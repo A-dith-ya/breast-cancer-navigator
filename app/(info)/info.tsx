@@ -1,19 +1,11 @@
 import React, { useRef } from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  Dimensions,
-  TouchableOpacity,
-} from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { router } from "expo-router";
 import { LinearGradient } from "expo-linear-gradient";
 import { WebView } from "react-native-webview";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { EXAMPLE_USER_SCROLL } from "@/constants/InjectedJavascript";
 import config from "@/config";
-
-const { width, height } = Dimensions.get("window");
 
 export default function InfoScreen() {
   const webviewRef = useRef<WebView>(null);
@@ -35,7 +27,7 @@ export default function InfoScreen() {
             <Ionicons
               name="information-circle-outline"
               color="#FFFFFF"
-              size={width * 0.08}
+              size={24}
             />
           </View>
           <Text style={styles.instructionText}>
@@ -68,7 +60,7 @@ export default function InfoScreen() {
             <Ionicons
               name="arrow-forward"
               color="#FF1493"
-              size={width * 0.06}
+              size={20}
               style={styles.buttonIcon}
             />
             <Text style={styles.buttonText}>Start Navigator</Text>
@@ -86,53 +78,53 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   content: {
-    width: width * 0.9,
+    width: "90%",
     alignItems: "center",
   },
   heroSection: {
     alignItems: "center",
-    marginBottom: height * 0.03,
+    marginBottom: 24,
   },
   title: {
-    fontSize: width * 0.07,
+    fontSize: 28,
     fontWeight: "700",
     color: "#FFFFFF",
     textAlign: "center",
-    marginBottom: height * 0.01,
+    marginBottom: 8,
   },
   subtitle: {
-    fontSize: width * 0.04,
+    fontSize: 16,
     color: "#FFD7E6",
     textAlign: "center",
-    marginBottom: height * 0.02,
+    marginBottom: 16,
   },
   instructionCard: {
     flexDirection: "row",
     backgroundColor: "rgba(255,255,255,0.2)",
-    borderRadius: 15,
-    padding: width * 0.04,
+    borderRadius: 12,
+    padding: 16,
     alignItems: "center",
-    marginBottom: height * 0.03,
+    marginBottom: 24,
   },
   cardIconContainer: {
     backgroundColor: "rgba(255,255,255,0.3)",
-    borderRadius: 10,
-    padding: width * 0.03,
-    marginRight: width * 0.04,
+    borderRadius: 8,
+    padding: 12,
+    marginRight: 16,
   },
   instructionText: {
     flex: 1,
     color: "#FFFFFF",
-    fontSize: width * 0.035,
-    lineHeight: width * 0.05,
+    fontSize: 14,
+    lineHeight: 20,
   },
   webviewContainer: {
-    width: width * 0.9,
-    height: height * 0.35,
+    width: "90%",
+    height: 280,
     backgroundColor: "rgba(255,255,255,0.2)",
     borderRadius: 15,
     overflow: "hidden",
-    marginBottom: height * 0.03,
+    marginBottom: 24,
   },
   webview: {
     width: "100%",
@@ -144,17 +136,17 @@ const styles = StyleSheet.create({
   button: {
     flexDirection: "row",
     backgroundColor: "#FFFFFF",
-    borderRadius: 15,
-    padding: width * 0.04,
+    borderRadius: 12,
+    padding: 16,
     justifyContent: "center",
     alignItems: "center",
   },
   buttonIcon: {
-    marginRight: width * 0.03,
+    marginRight: 12,
   },
   buttonText: {
     color: "#FF1493",
-    fontSize: width * 0.045,
+    fontSize: 18,
     fontWeight: "600",
   },
 });

@@ -1,8 +1,6 @@
-import { Text, type TextProps, StyleSheet, Dimensions } from "react-native";
+import { Text, type TextProps, StyleSheet } from "react-native";
 
 import { useThemeColor } from "@/hooks/useThemeColor";
-
-const { width, height } = Dimensions.get("window");
 
 export type ThemedTextProps = TextProps & {
   lightColor?: string;
@@ -50,42 +48,42 @@ export function ThemedText({
 
 const styles = StyleSheet.create({
   default: {
-    fontSize: width * 0.04,
+    fontSize: 16,
   },
   defaultSemiBold: {
-    fontSize: width * 0.04,
+    fontSize: 16,
     fontWeight: "600",
   },
   title: {
-    fontSize: width * 0.08,
+    fontSize: 32,
     fontWeight: "bold",
-    marginBottom: height * 0.05,
+    marginBottom: 40,
     textAlign: "center",
   },
   sectionTitle: {
-    fontSize: width * 0.06,
+    fontSize: 24,
     fontWeight: "bold",
-    marginBottom: height * 0.025,
+    marginBottom: 20,
   },
   section: {
-    fontSize: width * 0.05,
-    marginBottom: height * 0.025,
-    width: width * 0.9,
+    fontSize: 20,
+    marginBottom: 20,
+    width: "90%",
   },
   subtitle: {
-    fontSize: width * 0.05,
+    fontSize: 20,
     fontWeight: "bold",
   },
   link: {
-    fontSize: width * 0.04,
+    fontSize: 16,
     color: "#0a7ea4",
   },
   buttonTitle: {
-    fontSize: width * 0.06,
+    fontSize: 24,
     fontWeight: 500,
   },
   error: {
     color: "red",
-    fontSize: width * 0.03,
+    fontSize: 12,
   },
 });

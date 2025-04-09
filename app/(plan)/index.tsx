@@ -1,16 +1,8 @@
 import React from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  Dimensions,
-  TouchableOpacity,
-} from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { router } from "expo-router";
 import { LinearGradient } from "expo-linear-gradient";
 import Ionicons from "@expo/vector-icons/Ionicons";
-
-const { width, height } = Dimensions.get("window");
 
 export default function DashboardScreen() {
   const NavigationCard = ({
@@ -30,7 +22,7 @@ export default function DashboardScreen() {
     >
       <View style={styles.card}>
         <View style={styles.cardIconContainer}>
-          <Ionicons name={iconName} color="#FFFFFF" size={width * 0.08} />
+          <Ionicons name={iconName} color="#FFFFFF" size={24} />
         </View>
         <View style={styles.cardTextContainer}>
           <Text style={styles.cardTitle}>{title}</Text>
@@ -75,71 +67,71 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   content: {
-    width: width * 0.9,
+    width: "90%",
     alignItems: "center",
   },
   heroSection: {
     alignItems: "center",
-    marginBottom: height * 0.04,
+    marginBottom: 32,
   },
   title: {
-    fontSize: width * 0.07,
+    fontSize: 28,
     fontWeight: "700",
     color: "#FFFFFF",
     textAlign: "center",
-    marginBottom: height * 0.01,
+    marginBottom: 8,
   },
   subtitle: {
-    fontSize: width * 0.04,
+    fontSize: 16,
     color: "#FFD7E6",
     textAlign: "center",
-    marginBottom: height * 0.03,
+    marginBottom: 24,
   },
   cardContainer: {
     width: "100%",
-    marginBottom: height * 0.02,
+    marginBottom: 16,
   },
   card: {
     flexDirection: "row",
     backgroundColor: "rgba(255,255,255,0.2)",
-    borderRadius: 15,
-    padding: width * 0.04,
+    borderRadius: 12,
+    padding: 16,
     alignItems: "center",
   },
   cardIconContainer: {
     backgroundColor: "rgba(255,255,255,0.3)",
-    borderRadius: 10,
-    padding: width * 0.03,
-    marginRight: width * 0.04,
+    borderRadius: 8,
+    padding: 12,
+    marginRight: 16,
   },
   cardTextContainer: {
     flex: 1,
   },
   cardTitle: {
     color: "#FFFFFF",
-    fontSize: width * 0.045,
+    fontSize: 18,
     fontWeight: "600",
-    marginBottom: height * 0.005,
+    marginBottom: 4,
   },
   cardDescription: {
     color: "#FFD7E6",
-    fontSize: width * 0.035,
+    fontSize: 14,
   },
   disclaimerContainer: {
     flexDirection: "row",
     alignItems: "center",
-    marginTop: height * 0.03,
+    marginTop: 24,
     backgroundColor: "rgba(255,255,255,0.1)",
-    borderRadius: 10,
-    padding: width * 0.03,
+    borderRadius: 8,
+    padding: 12,
   },
   disclaimerIcon: {
-    marginRight: width * 0.03,
+    marginRight: 12,
   },
   disclaimerText: {
     flex: 1,
     color: "#FFFFFF",
-    fontSize: width * 0.03,
+    fontSize: 12,
     textAlign: "left",
   },
 });

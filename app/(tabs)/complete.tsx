@@ -1,5 +1,5 @@
 import { Link } from "expo-router";
-import { StyleSheet, Dimensions, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import { useRef } from "react";
 import { WebView } from "react-native-webview";
 import { SCROLL_TO_CONTACT } from "@/constants/InjectedJavascript";
@@ -7,8 +7,6 @@ import { ThemedText } from "@/components/ThemedText";
 import { LinearGradient } from "expo-linear-gradient";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import config from "@/config";
-
-const { width, height } = Dimensions.get("window");
 
 export default function CompleteScreen() {
   const webviewRef = useRef<WebView>(null);
@@ -18,7 +16,7 @@ export default function CompleteScreen() {
       <View style={styles.content}>
         <Ionicons
           name="checkmark-circle-outline"
-          size={width * 0.15}
+          size={48}
           color="#FFFFFF"
           style={styles.icon}
         />
@@ -54,32 +52,32 @@ const styles = StyleSheet.create({
   content: {
     flex: 1,
     alignItems: "center",
-    paddingTop: height * 0.02,
-    paddingHorizontal: width * 0.06,
+    paddingTop: 16,
+    paddingHorizontal: 24,
   },
   icon: {
-    marginBottom: height * 0.03,
+    marginBottom: 24,
   },
   title: {
-    fontSize: width * 0.06,
+    fontSize: 24,
     fontWeight: "700",
     color: "#FFFFFF",
     textAlign: "center",
-    marginBottom: height * 0.015,
+    marginBottom: 12,
   },
   subtitle: {
-    fontSize: width * 0.04,
+    fontSize: 16,
     color: "#FFD7E6",
     textAlign: "center",
-    marginBottom: height * 0.035,
-    paddingHorizontal: width * 0.02,
+    marginBottom: 28,
+    paddingHorizontal: 8,
   },
   webviewCard: {
     backgroundColor: "rgba(255,255,255,0.15)",
     borderRadius: 15,
     overflow: "hidden",
-    width: width * 0.9,
-    height: height * 0.4,
+    width: "90%",
+    height: 320,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 3 },
     shadowOpacity: 0.1,

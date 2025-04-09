@@ -3,7 +3,6 @@ import {
   View,
   Text,
   StyleSheet,
-  Dimensions,
   TouchableOpacity,
   Keyboard,
   Platform,
@@ -19,8 +18,6 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import { Linking } from "react-native";
 import { getWebResource } from "@/services/openAiService";
 import { SCROLL_TO_CHAPTER } from "@/constants/InjectedJavascript";
-
-const { width, height } = Dimensions.get("window");
 
 interface Message {
   id: number;
@@ -258,7 +255,7 @@ export default function CarebotScreen() {
               ]}
               disabled={isProcessing || inputText.trim() === ""}
             >
-              <Ionicons name="send" color="#FFFFFF" size={width * 0.06} />
+              <Ionicons name="send" color="#FFFFFF" size={20} />
             </TouchableOpacity>
           </View>
         </View>
@@ -273,38 +270,38 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
-    width: width * 0.9,
+    width: "90%",
     alignSelf: "center",
   },
   heroSection: {
     alignItems: "center",
-    marginBottom: height * 0.02,
+    marginBottom: 16,
   },
   title: {
-    fontSize: width * 0.07,
+    fontSize: 28,
     fontWeight: "700",
     color: "#FFFFFF",
     textAlign: "center",
-    marginBottom: height * 0.01,
+    marginBottom: 8,
   },
   subtitle: {
-    fontSize: width * 0.04,
+    fontSize: 16,
     color: "#FFD7E6",
     textAlign: "center",
   },
   exampleQuestionsContainer: {
-    marginBottom: height * 0.02,
+    marginBottom: 16,
   },
   exampleQuestionContainer: {
     backgroundColor: "rgba(255,255,255,0.2)",
-    borderRadius: 20,
-    paddingVertical: 8,
-    paddingHorizontal: 12,
-    marginHorizontal: 5,
-    maxWidth: width * 0.7,
+    borderRadius: 16,
+    paddingVertical: 6,
+    paddingHorizontal: 10,
+    marginHorizontal: 4,
+    maxWidth: 280,
   },
   exampleQuestionText: {
-    fontSize: width * 0.035,
+    fontSize: 14,
     color: "#FFFFFF",
     textAlign: "center",
   },
@@ -317,10 +314,10 @@ const styles = StyleSheet.create({
   },
   messageContainer: {
     maxWidth: "80%",
-    padding: width * 0.04,
-    marginVertical: height * 0.01,
-    borderRadius: 15,
-    minHeight: 50,
+    padding: 12,
+    marginVertical: 8,
+    borderRadius: 12,
+    minHeight: 40,
     justifyContent: "center",
   },
   userMessage: {
@@ -332,37 +329,37 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(255,255,255,0.2)",
   },
   messageText: {
-    fontSize: width * 0.04,
+    fontSize: 16,
     color: "#FFFFFF",
   },
   urlLinkText: {
-    fontSize: width * 0.03,
+    fontSize: 12,
     color: "#FFD7E6",
     marginTop: 5,
   },
   webview: {
-    width: width * 0.9,
-    height: height * 0.4,
+    width: "90%",
+    height: 280,
     alignSelf: "center",
     marginBottom: 10,
   },
   inputContainer: {
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: height * 0.02,
+    marginBottom: 16,
   },
   input: {
     flex: 1,
     backgroundColor: "rgba(255,255,255,0.2)",
-    borderRadius: 20,
-    padding: width * 0.04,
+    borderRadius: 16,
+    padding: 12,
     color: "#FFFFFF",
-    marginRight: width * 0.03,
+    marginRight: 12,
   },
   sendButton: {
     backgroundColor: "rgba(255,255,255,0.3)",
-    borderRadius: 50,
-    padding: width * 0.03,
+    borderRadius: 24,
+    padding: 10,
     justifyContent: "center",
     alignItems: "center",
   },

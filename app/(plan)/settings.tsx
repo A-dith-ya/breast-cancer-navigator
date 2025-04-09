@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import {
   StyleSheet,
-  Dimensions,
   View,
   ActivityIndicator,
   Keyboard,
@@ -17,8 +16,6 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { getOrCreateUUID } from "@/utils/uuidUtil";
 import config from "@/config";
 import Ionicons from "@expo/vector-icons/Ionicons";
-
-const { width, height } = Dimensions.get("window");
 
 export default function SettingsScreen() {
   const [age, setAge] = useState<string | null>(null);
@@ -77,11 +74,7 @@ export default function SettingsScreen() {
         <View style={styles.content}>
           {/* Header */}
           <View style={styles.header}>
-            <Ionicons
-              name="person-circle-outline"
-              size={width * 0.12}
-              color="#FFFFFF"
-            />
+            <Ionicons name="person-circle-outline" size={48} color="#FFFFFF" />
             <ThemedText style={styles.title}>Personal Info</ThemedText>
           </View>
 
@@ -131,7 +124,7 @@ export default function SettingsScreen() {
             <View key={idx} style={styles.inputContainer}>
               <Ionicons
                 name={field.icon as any}
-                size={width * 0.06}
+                size={20}
                 color="#FFFFFF"
                 style={styles.inputIcon}
               />
@@ -174,28 +167,28 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
-    width: width * 0.9,
+    width: "90%",
     alignSelf: "center",
     justifyContent: "center",
-    paddingTop: height * 0.05,
+    paddingTop: 40,
   },
   header: {
     alignItems: "center",
-    marginBottom: height * 0.04,
+    marginBottom: 32,
   },
   title: {
     color: "#FFFFFF",
-    fontSize: width * 0.06,
+    fontSize: 24,
     fontWeight: "700",
-    marginTop: height * 0.01,
+    marginTop: 8,
   },
   inputContainer: {
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: "rgba(255,255,255,0.2)",
-    borderRadius: 15,
-    padding: width * 0.03,
-    marginBottom: height * 0.02,
+    borderRadius: 12,
+    padding: 12,
+    marginBottom: 16,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
@@ -203,20 +196,20 @@ const styles = StyleSheet.create({
     elevation: 3,
   },
   inputIcon: {
-    marginRight: width * 0.03,
+    marginRight: 12,
   },
   input: {
     flex: 1,
-    fontSize: width * 0.04,
+    fontSize: 16,
     color: "#FFFFFF",
-    paddingVertical: height * 0.015,
-    paddingHorizontal: width * 0.03,
+    paddingVertical: 12,
+    paddingHorizontal: 12,
     backgroundColor: "rgba(255, 255, 255, 0.15)",
-    borderRadius: 10,
+    borderRadius: 8,
     borderWidth: 1,
     borderColor: "rgba(255, 255, 255, 0.3)",
   },
   loading: {
-    marginTop: height * 0.03,
+    marginTop: 24,
   },
 });

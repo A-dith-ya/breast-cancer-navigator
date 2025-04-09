@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import {
   StyleSheet,
-  Dimensions,
   FlatList,
   TouchableOpacity,
   View,
@@ -13,8 +12,6 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import { ThemedText } from "@/components/ThemedText";
 import { client } from "@/services/sanityService";
 import { CONTENT_QUERY } from "@/constants/Queries";
-
-const { width, height } = Dimensions.get("window");
 
 interface Question {
   question: string;
@@ -60,7 +57,7 @@ export default function ContentsScreen() {
       <View style={styles.itemContent}>
         <Ionicons
           name="help-circle-outline"
-          size={width * 0.06}
+          size={20}
           color="#FF1493"
           style={styles.icon}
         />
@@ -94,36 +91,36 @@ export default function ContentsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingTop: height * 0.05,
+    paddingTop: 40,
     alignItems: "center",
     justifyContent: "center",
   },
   content: {
-    width: width * 0.9,
+    width: "90%",
     flex: 1,
   },
   headerContainer: {
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: height * 0.03,
+    marginBottom: 24,
     justifyContent: "center",
   },
   headerIcon: {
-    marginRight: width * 0.03,
+    marginRight: 12,
   },
   headerText: {
-    fontSize: width * 0.06,
+    fontSize: 24,
     fontWeight: "700",
     color: "#FFFFFF",
   },
   listContainer: {
-    paddingBottom: height * 0.05,
+    paddingBottom: 40,
   },
   questionItem: {
     backgroundColor: "rgba(255,255,255,0.2)",
-    borderRadius: 15,
-    padding: width * 0.04,
-    marginBottom: height * 0.015,
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 12,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 3 },
     shadowOpacity: 0.1,
@@ -135,12 +132,12 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   icon: {
-    marginRight: width * 0.03,
+    marginRight: 12,
   },
   questionText: {
-    fontSize: width * 0.04,
+    fontSize: 16,
     color: "#FFFFFF",
     flex: 1,
-    lineHeight: width * 0.05,
+    lineHeight: 20,
   },
 });

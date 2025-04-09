@@ -1,10 +1,4 @@
-import {
-  Image,
-  ActivityIndicator,
-  StyleSheet,
-  Dimensions,
-  Linking,
-} from "react-native";
+import { Image, ActivityIndicator, StyleSheet, Linking } from "react-native";
 import React, { useState, useEffect, useRef } from "react";
 import { FlatList, GestureHandlerRootView } from "react-native-gesture-handler";
 import { WebView } from "react-native-webview";
@@ -17,8 +11,6 @@ import { client } from "@/services/sanityService";
 import { SCROLL_TO_SYMPTOM } from "@/constants/InjectedJavascript";
 import config from "@/config";
 import { CONTENT_QUERY } from "@/constants/Queries";
-
-const { width, height } = Dimensions.get("window");
 
 interface Question {
   question: string;
@@ -302,7 +294,7 @@ export default function QuestionScreen() {
                 <>
                   {questionNumber % 1 === 0.5 && (
                     <>
-                      <ThemedText style={{ marginTop: height * 0.05 }}>
+                      <ThemedText style={{ marginTop: 40 }}>
                         Sources:
                       </ThemedText>
                       {
@@ -358,30 +350,30 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    padding: width * 0.01,
+    padding: 4,
   },
   flatListContainer: {
-    padding: width * 0.01,
-    width: width * 0.9,
+    padding: 4,
+    width: "90%",
   },
   questionText: {
-    fontSize: width * 0.05,
-    width: width * 0.9,
+    fontSize: 20,
+    width: "90%",
   },
   optionText: {
-    fontSize: width * 0.046,
-    marginLeft: width * 0.032,
+    fontSize: 18,
+    marginLeft: 12,
   },
   subOptionText: {
-    fontSize: width * 0.042,
-    marginLeft: width * 0.11,
+    fontSize: 16,
+    marginLeft: 40,
   },
   webview: {
     alignSelf: "center",
-    width: width * 0.85,
-    height: height * 0.45,
-    marginVertical: height * 0.01,
-    marginHorizontal: width * 0.05,
+    width: "90%",
+    height: 300,
+    marginVertical: 8,
+    marginHorizontal: 20,
   },
   hideWebView: {
     position: "absolute",
@@ -389,7 +381,7 @@ const styles = StyleSheet.create({
     right: -1000,
   },
   buttonContainer: {
-    width: width * 0.9,
+    width: "90%",
     flexDirection: "row",
     justifyContent: "space-around",
   },
