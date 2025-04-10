@@ -10,8 +10,15 @@ import { useRouter } from "expo-router";
 import { LinearGradient } from "expo-linear-gradient";
 import Ionicons from "@expo/vector-icons/Ionicons";
 
+import UpdateModal from "@/components/UpdateModal";
+import { useAppStoreVersionCheck } from "@/hooks/useAppStoreVersionCheck";
+
 export default function WelcomeScreen() {
   const router = useRouter();
+
+  const { versionInfo, openStoreUpdate, dismissUpdate } =
+    useAppStoreVersionCheck();
+
   // Animated value for welcome animation
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const scaleAnim = useRef(new Animated.Value(0.8)).current;
@@ -126,6 +133,18 @@ export default function WelcomeScreen() {
           </Text>
         </View>
       </Animated.View>
+
+      {/* App Store Update Modal */}
+      {versionInfo?.needsUpdate && (
+        <UpdateModal
+          visible={true}
+          currentVersion={versionInfo.currentVersion}
+          storeVersion={versionInfo.storeVersion}
+          releaseNotes={versionInfo.releaseNotes}
+          onUpdate={openStoreUpdate}
+          onNotNow={dismissUpdate}
+        />
+      )}
     </LinearGradient>
   );
 }
