@@ -1,5 +1,4 @@
 import { Tabs, useRouter } from "expo-router";
-import { Dimensions } from "react-native";
 import { useEffect } from "react";
 import { ThemeProvider, useTheme } from "@/components/ThemedContext";
 import { TabBarIcon } from "@/components/navigation/TabBarIcon";
@@ -7,8 +6,6 @@ import { TabBarIcon } from "@/components/navigation/TabBarIcon";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import config from "@/config";
 import logger from "@/utils/logger";
-
-const { width } = Dimensions.get("window");
 
 export default function TabLayout() {
   const { colors } = useTheme();
@@ -36,7 +33,7 @@ export default function TabLayout() {
           },
           headerTintColor: colors.text,
           headerTitleStyle: {
-            fontSize: width * 0.045,
+            fontSize: 18,
           },
         }}
       >

@@ -5,15 +5,12 @@ import {
   ScrollView,
   FlatList,
   StyleSheet,
-  Dimensions,
   Animated,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { LinearGradient } from "expo-linear-gradient";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import config from "@/config";
-
-const { width, height } = Dimensions.get("window");
 
 export default function MentalWellbeingScreen() {
   const [wellbeing, setWellbeing] = useState({});
@@ -61,7 +58,7 @@ export default function MentalWellbeingScreen() {
         <Ionicons
           name="heart-outline"
           color="#FFFFFF"
-          size={width * 0.06}
+          size={20}
           style={styles.sectionIcon}
         />
         <Text style={styles.sectionTitle}>
@@ -76,7 +73,7 @@ export default function MentalWellbeingScreen() {
             <Ionicons
               name="arrow-forward"
               color="#FFFFFF"
-              size={width * 0.04}
+              size={16}
               style={styles.bulletIcon}
             />
             <Text style={styles.listItem}>{item}</Text>
@@ -122,76 +119,76 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   content: {
-    width: width * 0.9,
+    width: "90%",
     flex: 1,
-    paddingTop: height * 0.025,
+    paddingTop: 20,
   },
   heroSection: {
     alignItems: "center",
   },
   title: {
-    fontSize: width * 0.07,
+    fontSize: 28,
     fontWeight: "700",
     color: "#FFFFFF",
     textAlign: "center",
-    marginBottom: height * 0.01,
+    marginBottom: 8,
   },
   subtitle: {
-    fontSize: width * 0.04,
+    fontSize: 16,
     color: "#FFD7E6",
     textAlign: "center",
-    marginBottom: height * 0.03,
+    marginBottom: 24,
   },
   scrollViewContent: {
-    paddingBottom: height * 0.02,
+    paddingBottom: 16,
   },
   section: {
     backgroundColor: "rgba(255,255,255,0.2)",
-    borderRadius: 15,
-    padding: width * 0.04,
-    marginBottom: height * 0.02,
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 16,
   },
   sectionTitleContainer: {
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: height * 0.02,
+    marginBottom: 12,
   },
   sectionIcon: {
-    marginRight: width * 0.03,
+    marginRight: 12,
   },
   sectionTitle: {
     color: "#FFFFFF",
-    fontSize: width * 0.05,
+    fontSize: 18,
     fontWeight: "600",
   },
   listItemContainer: {
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: height * 0.01,
+    marginBottom: 8,
   },
   bulletIcon: {
-    marginRight: width * 0.03,
+    marginRight: 12,
   },
   listItem: {
     color: "#FFD7E6",
-    fontSize: width * 0.035,
+    fontSize: 14,
     flex: 1,
   },
   disclaimerContainer: {
     flexDirection: "row",
     alignItems: "center",
-    marginTop: height * 0.02,
+    marginTop: 16,
     backgroundColor: "rgba(255,255,255,0.1)",
-    borderRadius: 10,
-    padding: width * 0.03,
+    borderRadius: 8,
+    padding: 12,
   },
   disclaimerIcon: {
-    marginRight: width * 0.03,
+    marginRight: 12,
   },
   disclaimerText: {
     flex: 1,
     color: "#FFFFFF",
-    fontSize: width * 0.03,
+    fontSize: 12,
     textAlign: "left",
   },
 });

@@ -1,13 +1,6 @@
 import React from "react";
-import {
-  TextInput,
-  type TextInputProps,
-  StyleSheet,
-  Dimensions,
-} from "react-native";
+import { TextInput, type TextInputProps, StyleSheet } from "react-native";
 import { useThemeColor } from "@/hooks/useThemeColor";
-
-const { width, height } = Dimensions.get("window");
 
 export type ThemedTextInputProps = TextInputProps & {
   lightColor?: string;
@@ -45,22 +38,22 @@ export function ThemedTextInput({
 
 const styles = StyleSheet.create({
   default: {
-    fontSize: width * 0.04,
-    padding: width * 0.03,
+    fontSize: 16,
+    padding: 12,
     borderWidth: 1,
     borderColor: "#ccc",
     borderRadius: 4,
   },
   outlined: {
-    fontSize: width * 0.04,
-    padding: width * 0.03,
+    fontSize: 16,
+    padding: 12,
     borderWidth: 2,
     borderColor: "#000",
     borderRadius: 4,
   },
   filled: {
-    fontSize: width * 0.04,
-    padding: width * 0.03,
+    fontSize: 16,
+    padding: 12,
     backgroundColor: "#f0f0f0",
     borderRadius: 4,
   },
