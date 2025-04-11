@@ -55,6 +55,8 @@ export default function SettingsScreen() {
       if (response.error) {
         setError(response.error);
       } else {
+        // Clear any existing plan data and save the new one
+        await AsyncStorage.removeItem(config.RECOMMENDATION_KEY);
         await AsyncStorage.setItem(
           config.RECOMMENDATION_KEY,
           JSON.stringify(response)

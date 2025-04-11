@@ -1,10 +1,14 @@
-import React from "react";
+import * as React from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { router } from "expo-router";
 import { LinearGradient } from "expo-linear-gradient";
 import Ionicons from "@expo/vector-icons/Ionicons";
 
 export default function DashboardScreen() {
+  const handleRegeneratePlan = () => {
+    router.push("/(plan)/settings");
+  };
+
   const NavigationCard = ({
     title,
     description,
@@ -56,6 +60,16 @@ export default function DashboardScreen() {
           iconName="heart-outline"
         />
       </View>
+
+      <TouchableOpacity
+        style={styles.regenerateButton}
+        onPress={handleRegeneratePlan}
+      >
+        <View style={styles.regenerateButtonContent}>
+          <Ionicons name="refresh-outline" color="#FFFFFF" size={20} />
+          <Text style={styles.regenerateButtonText}>Regenerate Plan</Text>
+        </View>
+      </TouchableOpacity>
     </LinearGradient>
   );
 }
@@ -65,10 +79,13 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
+    paddingBottom: 40,
   },
   content: {
     width: "90%",
     alignItems: "center",
+    flex: 1,
+    justifyContent: "center",
   },
   heroSection: {
     alignItems: "center",
@@ -133,5 +150,32 @@ const styles = StyleSheet.create({
     color: "#FFFFFF",
     fontSize: 12,
     textAlign: "left",
+  },
+  regenerateButton: {
+    width: "50%",
+    backgroundColor: "rgba(255,255,255,0.2)",
+    borderRadius: 12,
+    padding: 16,
+    alignItems: "center",
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.4)",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+    position: "absolute",
+    bottom: 40,
+    alignSelf: "center",
+  },
+  regenerateButtonContent: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  regenerateButtonText: {
+    color: "#FFFFFF",
+    fontSize: 16,
+    fontWeight: "600",
+    marginLeft: 8,
   },
 });
