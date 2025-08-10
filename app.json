@@ -2,7 +2,7 @@
   "expo": {
     "name": "Breast Cancer Navigator",
     "slug": "breast-cancer-navigator",
-    "version": "1.0.3",
+    "version": "1.0.7",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "myapp",
@@ -18,7 +18,7 @@
       "config": {
         "usesNonExemptEncryption": false
       },
-      "buildNumber": "9 "
+      "buildNumber": "19"
     },
     "android": {
       "adaptiveIcon": {

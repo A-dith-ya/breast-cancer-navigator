@@ -1,23 +1,21 @@
-import {
-  View,
-  StyleSheet,
-  Dimensions,
-  ActivityIndicator,
-  TouchableWithoutFeedback,
-  Keyboard,
-} from "react-native";
 import React, { useEffect, useState } from "react";
+import {
+  StyleSheet,
+  View,
+  ActivityIndicator,
+  Keyboard,
+  TouchableWithoutFeedback,
+} from "react-native";
 import { useRouter } from "expo-router";
-import { ThemedView } from "@/components/ThemedView";
+import { LinearGradient } from "expo-linear-gradient";
 import { ThemedText } from "@/components/ThemedText";
-import { ThemedButton } from "@/components/ThemedButton";
 import { ThemedTextInput } from "@/components/ThemedTextInput";
+import { ThemedButton } from "@/components/ThemedButton";
 import { generateRecommendation } from "@/services/recommendationService";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { getOrCreateUUID } from "@/utils/uuidUtil";
 import config from "@/config";
-
-const { width, height } = Dimensions.get("window");
+import Ionicons from "@expo/vector-icons/Ionicons";
 
 export default function SettingsScreen() {
   const [age, setAge] = useState<string | null>(null);
@@ -26,16 +24,20 @@ export default function SettingsScreen() {
     null
   );
   const [mobility, setMobility] = useState<string | null>(null);
-
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
-
-  const router = useRouter();
   const [id, setId] = useState<string | null>(null);
+  const router = useRouter();
+
+  useEffect(() => {
+    const getId = async () => {
+      setId(await getOrCreateUUID());
+    };
+    getId();
+  }, []);
 
   const handleGeneratePlan = async () => {
     setLoading(true);
-
     if (!id || !age || !gender || !dietaryPreferences || !mobility) {
       setError("Please fill out all fields");
       setLoading(false);
@@ -50,10 +52,11 @@ export default function SettingsScreen() {
         dietaryPreferences,
         mobility
       );
-
       if (response.error) {
         setError(response.error);
       } else {
+        // Clear any existing plan data and save the new one
+        await AsyncStorage.removeItem(config.RECOMMENDATION_KEY);
         await AsyncStorage.setItem(
           config.RECOMMENDATION_KEY,
           JSON.stringify(response)
@@ -67,104 +70,95 @@ export default function SettingsScreen() {
     setLoading(false);
   };
 
-  useEffect(() => {
-    const getId = async () => {
-      setId(await getOrCreateUUID());
-    };
-
-    getId();
-  }, []);
-
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <ThemedView style={styles.container}>
-        <ThemedText type="title">Personal Information</ThemedText>
-        <View style={styles.inputContainer}>
-          <ThemedText type="section" style={styles.inputLabel}>
-            Age
-          </ThemedText>
-          <ThemedTextInput
-            value={age ? age.toString() : ""}
-            onChangeText={(text) => {
-              if (/^[0-9]{0,2}$/.test(text)) {
-                setAge(text);
-              }
-            }}
-            placeholder="Enter your age"
-            keyboardType="numeric"
-            style={styles.input}
-          />
+      <LinearGradient colors={["#FF1493", "#B13D8D"]} style={styles.container}>
+        <View style={styles.content}>
+          {/* Header */}
+          <View style={styles.header}>
+            <Ionicons name="person-circle-outline" size={48} color="#FFFFFF" />
+            <ThemedText style={styles.title}>Personal Info</ThemedText>
+          </View>
+
+          {/* Inputs */}
+          {[
+            {
+              label: "Age",
+              icon: "calendar-outline",
+              value: age,
+              setter: setAge,
+              keyboardType: "numeric",
+              placeholder: "Enter your age",
+              validate: (text: string) => /^[0-9]{0,2}$/.test(text),
+            },
+            {
+              label: "Gender",
+              icon: "male-female-outline",
+              value: gender,
+              setter: setGender,
+              placeholder: "Enter your gender",
+              validate: (text: string) => /^[a-zA-Z, -]{0,15}$/.test(text),
+            },
+            {
+              label: "Dietary Preferences",
+              icon: "nutrition-outline",
+              value: dietaryPreferences,
+              setter: setDietaryPreferences,
+              placeholder: "None, Vegetarian, Gluten Free",
+              validate: (text: string) => /^[a-zA-Z, -]{0,30}$/.test(text),
+            },
+            {
+              label: "Exercise Activity",
+              icon: "walk-outline",
+              value: mobility,
+              setter: setMobility,
+              placeholder: "Limited Mobility, Moderate Activity",
+              validate: (text: string) => /^[a-zA-Z, -]{0,30}$/.test(text),
+            },
+            {
+              label: "Cancer Type",
+              icon: "medkit-outline",
+              value: "Breast Cancer",
+              setter: () => {},
+              editable: false,
+            },
+          ].map((field, idx) => (
+            <View key={idx} style={styles.inputContainer}>
+              <Ionicons
+                name={field.icon as any}
+                size={20}
+                color="#FFFFFF"
+                style={styles.inputIcon}
+              />
+              <ThemedTextInput
+                placeholder={field.placeholder}
+                keyboardType={field.keyboardType || "ascii-capable"}
+                editable={field.editable !== false}
+                value={field.value || ""}
+                onChangeText={(text) => {
+                  if (field.setter && field.editable !== false) {
+                    if (!field.validate || field.validate(text)) {
+                      field.setter(text);
+                    }
+                  }
+                }}
+                style={styles.input}
+              />
+            </View>
+          ))}
+
+          <ThemedButton text="Generate Plan" onPress={handleGeneratePlan} />
+
+          {loading && (
+            <ActivityIndicator
+              size="large"
+              color="#FFFFFF"
+              style={styles.loading}
+            />
+          )}
+          {error && <ThemedText type="error">{error}</ThemedText>}
         </View>
-        <View style={styles.inputContainer}>
-          <ThemedText type="section" style={styles.inputLabel}>
-            Gender
-          </ThemedText>
-          <ThemedTextInput
-            value={gender || ""}
-            onChangeText={(text) => {
-              if (/^[a-zA-Z, -]{0,15}$/.test(text)) {
-                setGender(text);
-              }
-            }}
-            placeholder="Enter your gender"
-            keyboardType="ascii-capable"
-            style={styles.input}
-          />
-        </View>
-        <View style={styles.inputContainer}>
-          <ThemedText type="section" style={styles.inputLabel}>
-            Dietary Preferences
-          </ThemedText>
-          <ThemedTextInput
-            value={dietaryPreferences || ""}
-            onChangeText={(text) => {
-              if (/^[a-zA-Z, -]{0,30}$/.test(text)) {
-                setDietaryPreferences(text);
-              }
-            }}
-            placeholder="None, Vegetarian, Gluten Free"
-            keyboardType="ascii-capable"
-            style={styles.input}
-          />
-        </View>
-        <View style={styles.inputContainer}>
-          <ThemedText type="section" style={styles.inputLabel}>
-            Exercise Activity
-          </ThemedText>
-          <ThemedTextInput
-            value={mobility || ""}
-            onChangeText={(text) => {
-              if (/^[a-zA-Z, -]{0,30}$/.test(text)) {
-                setMobility(text);
-              }
-            }}
-            placeholder="Limited Mobility, Moderate Activity"
-            keyboardType="ascii-capable"
-            style={styles.input}
-          />
-        </View>
-        <View style={styles.inputContainer}>
-          <ThemedText type="section" style={styles.inputLabel}>
-            Cancer Type
-          </ThemedText>
-          <ThemedTextInput
-            value="Breast Cancer"
-            // placeholder="Breast Cancer"
-            editable={false}
-            keyboardType="ascii-capable"
-            style={styles.input}
-          />
-        </View>
-        <ThemedButton text="Generate Plan" onPress={handleGeneratePlan} />
-        {loading && (
-          <ActivityIndicator
-            size="large"
-            color="#0000ff"
-            style={{ marginTop: height * 0.05 }}
-          />
-        )}
-        {error && <ThemedText type="error">{error}</ThemedText>}
-      </ThemedView>
+      </LinearGradient>
     </TouchableWithoutFeedback>
   );
 }
@@ -172,26 +166,52 @@ export default function SettingsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  content: {
+    flex: 1,
+    width: "90%",
+    alignSelf: "center",
     justifyContent: "center",
+    paddingTop: 40,
+  },
+  header: {
     alignItems: "center",
-    padding: width * 0.05,
+    marginBottom: 32,
+  },
+  title: {
+    color: "#FFFFFF",
+    fontSize: 24,
+    fontWeight: "700",
+    marginTop: 8,
   },
   inputContainer: {
-    width: "100%",
     flexDirection: "row",
-    justifyContent: "center",
     alignItems: "center",
-    marginBottom: height * 0.05,
+    backgroundColor: "rgba(255,255,255,0.2)",
+    borderRadius: 12,
+    padding: 12,
+    marginBottom: 16,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
-  inputLabel: {
-    width: width * 0.3,
-    textAlign: "center",
-    marginBottom: 0,
+  inputIcon: {
+    marginRight: 12,
   },
   input: {
-    width: width * 0.6,
-    padding: width * 0.03,
-    fontSize: width * 0.04,
+    flex: 1,
+    fontSize: 16,
+    color: "#FFFFFF",
+    paddingVertical: 12,
+    paddingHorizontal: 12,
+    backgroundColor: "rgba(255, 255, 255, 0.15)",
+    borderRadius: 8,
     borderWidth: 1,
+    borderColor: "rgba(255, 255, 255, 0.3)",
+  },
+  loading: {
+    marginTop: 24,
   },
 });

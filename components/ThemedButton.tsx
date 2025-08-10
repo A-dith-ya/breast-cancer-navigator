@@ -2,13 +2,10 @@ import {
   TouchableOpacity,
   type TouchableOpacityProps,
   StyleSheet,
-  Dimensions,
 } from "react-native";
 import { ThemedText, type ThemedTextProps } from "./ThemedText";
 
 import { useThemeColor } from "@/hooks/useThemeColor";
-
-const { width } = Dimensions.get("window");
 
 export type ThemedButtonProps = TouchableOpacityProps & {
   lightColor?: string;
@@ -51,8 +48,8 @@ export function ThemedButton({
 
 const styles = StyleSheet.create({
   button: {
-    padding: width * 0.03,
-    borderRadius: (width * 0.03) / 2,
+    padding: 12,
+    borderRadius: 6,
     alignItems: "center",
     justifyContent: "center",
   },

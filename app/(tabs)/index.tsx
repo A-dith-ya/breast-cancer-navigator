@@ -1,10 +1,4 @@
-import {
-  Image,
-  ActivityIndicator,
-  StyleSheet,
-  Dimensions,
-  Linking,
-} from "react-native";
+import { Image, ActivityIndicator, StyleSheet, Linking } from "react-native";
 import React, { useState, useEffect, useRef } from "react";
 import { FlatList, GestureHandlerRootView } from "react-native-gesture-handler";
 import { WebView } from "react-native-webview";
@@ -17,8 +11,6 @@ import { client } from "@/services/sanityService";
 import { SCROLL_TO_SYMPTOM } from "@/constants/InjectedJavascript";
 import config from "@/config";
 import { CONTENT_QUERY } from "@/constants/Queries";
-
-const { width, height } = Dimensions.get("window");
 
 interface Question {
   question: string;
@@ -176,47 +168,70 @@ export default function QuestionScreen() {
   }: {
     item: Question["options"][number];
     index: number;
-  }) => (
-    <>
-      {item.subOptions && typeof item.subOptions[0] === "object" ? (
-        <>
-          <ThemedText style={styles.optionText}>{item.option}</ThemedText>
-          <FlatList
-            data={item.subOptions}
-            renderItem={({ item: subItem, index: subIndex }) =>
-              renderSuboptionItem({
-                item: subItem,
-                // Add a unique index to each suboption webview ref
-                index: index * 10 + subIndex,
-                customWebViewUri: item.uri,
-              })
-            }
-            keyExtractor={(item) =>
-              typeof item === "object" ? item.subOption : item
-            }
-            style={styles.flatListContainer}
-          />
-        </>
-      ) : (
-        <>
-          {renderRadioButton(item.option)}
-          {item.subOptions &&
-            item.subOptions.map((subOption) => (
-              <ThemedText key={subOption} style={styles.subOptionText}>
-                {subOption}
-              </ThemedText>
-            ))}
-          {item.filter &&
-            selectedOptions[Math.floor(questionNumber)]?.includes(
-              item.option
-            ) &&
-            renderWebView(item.filter, index)}
-        </>
-      )}
-      {questionNumber % 1 === 0 &&
-        renderImage(Math.floor(questionNumber), index)}
-    </>
-  );
+  }) => {
+    // Skip rendering the option if it does not have a filter or suboptions
+    if (
+      (!item.filter &&
+        !(item.subOptions && typeof item.subOptions[0] === "object")) ||
+      (item.subOptions &&
+        typeof item.subOptions[0] === "object" &&
+        !item.subOptions[0].filter)
+    ) {
+      return null;
+    }
+
+    return (
+      <>
+        {item.subOptions && typeof item.subOptions[0] === "object" ? (
+          <>
+            <ThemedText style={styles.optionText}>{item.option}</ThemedText>
+            <FlatList
+              data={item.subOptions}
+              renderItem={({ item: subItem, index: subIndex }) =>
+                renderSuboptionItem({
+                  item: subItem,
+                  // Add a unique index to each suboption webview ref
+                  index: index * 10 + subIndex,
+                  customWebViewUri: item.uri,
+                })
+              }
+              keyExtractor={(item) =>
+                typeof item === "object" ? item.subOption : item
+              }
+              style={styles.flatListContainer}
+            />
+          </>
+        ) : (
+          <>
+            {renderRadioButton(item.option)}
+            {item.subOptions &&
+              item.subOptions.map((subOption) => (
+                <ThemedText key={subOption} style={styles.subOptionText}>
+                  {subOption}
+                </ThemedText>
+              ))}
+            {item.filter &&
+              selectedOptions[Math.floor(questionNumber)]?.includes(
+                item.option
+              ) &&
+              renderWebView(item.filter, index)}
+          </>
+        )}
+        {questionNumber % 1 === 0 &&
+          renderImage(Math.floor(questionNumber), index)}
+      </>
+    );
+  };
+
+  useEffect(() => {
+    // Check if an initial question number is passed from the Contents screen
+    if (local.initialQuestionNumber) {
+      const initialQuestionNumber = parseFloat(
+        local.initialQuestionNumber as string
+      );
+      setQuestionNumber(initialQuestionNumber);
+    }
+  }, [local.initialQuestionNumber]);
 
   useEffect(() => {
     // Update the webview uri based on the current question number
@@ -279,7 +294,7 @@ export default function QuestionScreen() {
                 <>
                   {questionNumber % 1 === 0.5 && (
                     <>
-                      <ThemedText style={{ marginTop: height * 0.05 }}>
+                      <ThemedText style={{ marginTop: 40 }}>
                         Sources:
                       </ThemedText>
                       {
@@ -335,30 +350,30 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    padding: width * 0.01,
+    padding: 4,
   },
   flatListContainer: {
-    padding: width * 0.01,
-    width: width * 0.9,
+    padding: 4,
+    width: "90%",
   },
   questionText: {
-    fontSize: width * 0.05,
-    width: width * 0.9,
+    fontSize: 20,
+    width: "90%",
   },
   optionText: {
-    fontSize: width * 0.046,
-    marginLeft: width * 0.032,
+    fontSize: 18,
+    marginLeft: 12,
   },
   subOptionText: {
-    fontSize: width * 0.042,
-    marginLeft: width * 0.11,
+    fontSize: 16,
+    marginLeft: 40,
   },
   webview: {
     alignSelf: "center",
-    width: width * 0.85,
-    height: height * 0.45,
-    marginVertical: height * 0.01,
-    marginHorizontal: width * 0.05,
+    width: "90%",
+    height: 300,
+    marginVertical: 8,
+    marginHorizontal: 20,
   },
   hideWebView: {
     position: "absolute",
@@ -366,7 +381,7 @@ const styles = StyleSheet.create({
     right: -1000,
   },
   buttonContainer: {
-    width: width * 0.9,
+    width: "90%",
     flexDirection: "row",
     justifyContent: "space-around",
   },

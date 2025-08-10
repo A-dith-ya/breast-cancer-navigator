@@ -1,8 +1,6 @@
-import { View, TouchableOpacity, StyleSheet, Dimensions } from "react-native";
+import { View, TouchableOpacity, StyleSheet } from "react-native";
 import { ThemedText } from "./ThemedText";
 import { useTheme } from "./ThemedContext";
-
-const { width, height } = Dimensions.get("window");
 
 interface RadioButtonProps {
   label: string;
@@ -29,26 +27,26 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: "row",
     alignItems: "center",
-    marginVertical: height * 0.012,
-    paddingHorizontal: width * 0.02,
+    marginVertical: 10,
+    paddingHorizontal: 8,
     flexWrap: "wrap",
   },
   radio: {
-    width: width * 0.05,
-    height: width * 0.05,
-    borderRadius: (width * 0.05) / 2,
+    width: 20,
+    height: 20,
+    borderRadius: 10,
     borderWidth: 2,
     alignItems: "center",
     justifyContent: "center",
-    marginRight: width * 0.02,
+    marginRight: 8,
   },
   selected: {
-    width: width * 0.0254,
-    height: width * 0.0254,
-    borderRadius: (width * 0.025) / 2,
+    width: 10,
+    height: 10,
+    borderRadius: 5,
     backgroundColor: "#000",
   },
   label: {
-    fontSize: width * 0.046,
+    fontSize: 16,
   },
 });

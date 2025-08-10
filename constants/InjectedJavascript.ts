@@ -92,4 +92,18 @@ const EXAMPLE_USER_SCROLL = `
 true; // note: this is required, or you'll sometimes get silent failures
 `;
 
-export { SCROLL_TO_SYMPTOM, SCROLL_TO_CONTACT, EXAMPLE_USER_SCROLL };
+const SCROLL_TO_CHAPTER = (item: string) => `
+ let elements = Array.from(document.querySelectorAll('h2.wp-block-heading.ChapterH2'));
+ let element = elements.find(element => element.textContent.toLowerCase().includes('${item}'.toLowerCase()));
+ if (element) {
+   element.scrollIntoView({ behavior: 'auto', block: 'start' });
+ }
+ true; // Prevent silent failures
+`;
+
+export {
+  SCROLL_TO_SYMPTOM,
+  SCROLL_TO_CONTACT,
+  EXAMPLE_USER_SCROLL,
+  SCROLL_TO_CHAPTER,
+};

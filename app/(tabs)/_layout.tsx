@@ -1,10 +1,7 @@
 import { Tabs, useRouter } from "expo-router";
-import { Dimensions } from "react-native";
 import { ThemeProvider, useTheme } from "@/components/ThemedContext";
 import { TabBarIcon } from "@/components/navigation/TabBarIcon";
 import { ThemedText } from "@/components/ThemedText";
-
-const { width } = Dimensions.get("window");
 
 export default function TabLayout() {
   const { colors } = useTheme();
@@ -19,14 +16,29 @@ export default function TabLayout() {
           },
           headerTintColor: colors.text,
           headerTitleStyle: {
-            fontSize: width * 0.045,
+            fontSize: 18,
           },
         }}
       >
         <Tabs.Screen
+          name="contents"
+          options={{
+            title: "Navigator Contents",
+            tabBarStyle: { display: "none" },
+            href: null,
+            headerLeft: () => (
+              <TabBarIcon
+                name="chevron-back"
+                color={colors.text}
+                onPress={() => router.replace("/(info)/info")}
+              />
+            ),
+          }}
+        />
+        <Tabs.Screen
           name="index"
           options={{
-            title: "Breast Cancer Navigator",
+            title: "Navigator",
             tabBarStyle: { display: "none" },
             tabBarIcon: ({ color, focused }) => (
               <TabBarIcon
@@ -37,11 +49,14 @@ export default function TabLayout() {
               />
             ),
             headerLeft: () => (
-              <TabBarIcon
-                name="chevron-back"
-                color={colors.text}
-                onPress={() => router.replace("/(info)/info")}
-              />
+              <>
+                <TabBarIcon
+                  name="chevron-back"
+                  color={colors.text}
+                  onPress={() => router.replace("/(tabs)/contents")}
+                />
+                <ThemedText>Contents</ThemedText>
+              </>
             ),
           }}
         />
@@ -65,10 +80,25 @@ export default function TabLayout() {
                 <TabBarIcon
                   name="chevron-back"
                   color={colors.text}
-                  onPress={() => router.replace("/(info)")}
+                  onPress={() => router.replace("/(tabs)/contents")}
                 />
-                <ThemedText>Home</ThemedText>
+                <ThemedText>Contents</ThemedText>
               </>
+            ),
+          }}
+        />
+        <Tabs.Screen
+          name="care-bot"
+          options={{
+            title: "Care Path AI",
+            tabBarStyle: { display: "none" },
+            href: null,
+            headerLeft: () => (
+              <TabBarIcon
+                name="chevron-back"
+                color={colors.text}
+                onPress={() => router.replace("/(info)")}
+              />
             ),
           }}
         />

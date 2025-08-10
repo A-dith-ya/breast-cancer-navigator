@@ -1,35 +1,76 @@
-import { StyleSheet, Dimensions } from "react-native";
-import React from "react";
-import { useRouter } from "expo-router";
-import { ThemedView } from "@/components/ThemedView";
-import { ThemedButton } from "@/components/ThemedButton";
-
-const { width, height } = Dimensions.get("window");
+import * as React from "react";
+import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import { router } from "expo-router";
+import { LinearGradient } from "expo-linear-gradient";
+import Ionicons from "@expo/vector-icons/Ionicons";
 
 export default function DashboardScreen() {
-  const router = useRouter();
+  const handleRegeneratePlan = () => {
+    router.push("/(plan)/settings");
+  };
+
+  const NavigationCard = ({
+    title,
+    description,
+    href,
+    iconName,
+  }: {
+    title: string;
+    description: string;
+    href: string;
+    iconName: string;
+  }) => (
+    <TouchableOpacity
+      style={styles.cardContainer}
+      onPress={() => router.push(href)}
+    >
+      <View style={styles.card}>
+        <View style={styles.cardIconContainer}>
+          <Ionicons name={iconName} color="#FFFFFF" size={24} />
+        </View>
+        <View style={styles.cardTextContainer}>
+          <Text style={styles.cardTitle}>{title}</Text>
+          <Text style={styles.cardDescription}>{description}</Text>
+        </View>
+      </View>
+    </TouchableOpacity>
+  );
 
   return (
-    <ThemedView style={styles.container}>
-      <ThemedButton
-        text="Nutrition & Meal Plan"
-        style={styles.button}
-        type="buttonTitle"
-        onPress={() => router.push("/(plan)/meal-plan")}
-      />
-      <ThemedButton
-        text="Exercise & Mobility"
-        style={styles.button}
-        type="buttonTitle"
-        onPress={() => router.push("/(plan)/fitness-plan")}
-      />
-      <ThemedButton
-        text="Mind & Wellness"
-        style={styles.button}
-        type="buttonTitle"
-        onPress={() => router.push("/(plan)/wellbeing-plan")}
-      />
-    </ThemedView>
+    <LinearGradient colors={["#FF1493", "#B13D8D"]} style={styles.container}>
+      <View style={styles.content}>
+        <NavigationCard
+          title="Nutrition & Meal Plan"
+          description="Tailored Dietary Guidance"
+          href="/(plan)/meal-plan"
+          iconName="nutrition-outline"
+        />
+
+        <NavigationCard
+          title="Exercise & Mobility"
+          description="Adaptive Fitness Strategies"
+          href="/(plan)/fitness-plan"
+          iconName="fitness-outline"
+        />
+
+        <NavigationCard
+          title="Mind & Wellness"
+          description="Emotional Health Support"
+          href="/(plan)/wellbeing-plan"
+          iconName="heart-outline"
+        />
+      </View>
+
+      <TouchableOpacity
+        style={styles.regenerateButton}
+        onPress={handleRegeneratePlan}
+      >
+        <View style={styles.regenerateButtonContent}>
+          <Ionicons name="refresh-outline" color="#FFFFFF" size={20} />
+          <Text style={styles.regenerateButtonText}>Regenerate Plan</Text>
+        </View>
+      </TouchableOpacity>
+    </LinearGradient>
   );
 }
 
@@ -38,11 +79,103 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    padding: width * 0.05,
+    paddingBottom: 40,
   },
-  button: {
-    width: width * 0.8,
-    marginBottom: height * 0.1,
-    borderRadius: 0,
+  content: {
+    width: "90%",
+    alignItems: "center",
+    flex: 1,
+    justifyContent: "center",
+  },
+  heroSection: {
+    alignItems: "center",
+    marginBottom: 32,
+  },
+  title: {
+    fontSize: 28,
+    fontWeight: "700",
+    color: "#FFFFFF",
+    textAlign: "center",
+    marginBottom: 8,
+  },
+  subtitle: {
+    fontSize: 16,
+    color: "#FFD7E6",
+    textAlign: "center",
+    marginBottom: 24,
+  },
+  cardContainer: {
+    width: "100%",
+    marginBottom: 16,
+  },
+  card: {
+    flexDirection: "row",
+    backgroundColor: "rgba(255,255,255,0.2)",
+    borderRadius: 12,
+    padding: 16,
+    alignItems: "center",
+  },
+  cardIconContainer: {
+    backgroundColor: "rgba(255,255,255,0.3)",
+    borderRadius: 8,
+    padding: 12,
+    marginRight: 16,
+  },
+  cardTextContainer: {
+    flex: 1,
+  },
+  cardTitle: {
+    color: "#FFFFFF",
+    fontSize: 18,
+    fontWeight: "600",
+    marginBottom: 4,
+  },
+  cardDescription: {
+    color: "#FFD7E6",
+    fontSize: 14,
+  },
+  disclaimerContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginTop: 24,
+    backgroundColor: "rgba(255,255,255,0.1)",
+    borderRadius: 8,
+    padding: 12,
+  },
+  disclaimerIcon: {
+    marginRight: 12,
+  },
+  disclaimerText: {
+    flex: 1,
+    color: "#FFFFFF",
+    fontSize: 12,
+    textAlign: "left",
+  },
+  regenerateButton: {
+    width: "50%",
+    backgroundColor: "rgba(255,255,255,0.2)",
+    borderRadius: 12,
+    padding: 16,
+    alignItems: "center",
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.4)",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+    position: "absolute",
+    bottom: 40,
+    alignSelf: "center",
+  },
+  regenerateButtonContent: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  regenerateButtonText: {
+    color: "#FFFFFF",
+    fontSize: 16,
+    fontWeight: "600",
+    marginLeft: 8,
   },
 });
